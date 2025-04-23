@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -24,6 +23,9 @@ const QuizAttempt: React.FC = () => {
   const [startTime] = useState(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  const [is10SecondTimerActive, setIs10SecondTimerActive] = useState(false);
+  const [tenSecondTimeLeft, setTenSecondTimeLeft] = useState(10);
+  
   useEffect(() => {
     if (quiz) {
       // Set up the timer
@@ -41,8 +43,25 @@ const QuizAttempt: React.FC = () => {
       }, 1000);
       
       return () => clearInterval(timer);
+      
+      // Add 10-second timer logic for the last question
+      if (currentQuestionIndex === quiz.questions.length - 1) {
+        setIs10SecondTimerActive(true);
+        const tenSecondTimer = setInterval(() => {
+          setTenSecondTimeLeft(prev => {
+            if (prev <= 1) {
+              clearInterval(tenSecondTimer);
+              handleSubmitQuiz();
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
+        return () => clearInterval(tenSecondTimer);
+      }
     }
-  }, [quiz]);
+  }, [quiz, currentQuestionIndex]);
   
   if (!quiz) {
     return (
@@ -129,6 +148,13 @@ const QuizAttempt: React.FC = () => {
               <span className={timeLeft < 60 ? "text-destructive" : ""}>
                 {formatTime(timeLeft)}
               </span>
+              
+              {/* 10-second timer for last question */}
+              {is10SecondTimerActive && (
+                <div className="ml-4 text-red-500 font-bold">
+                  Last Question: {tenSecondTimeLeft}s
+                </div>
+              )}
             </div>
           </div>
           

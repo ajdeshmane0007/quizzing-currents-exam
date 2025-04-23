@@ -52,6 +52,18 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+        quiz: {
+          purple: {
+            light: '#E5DEFF',
+            DEFAULT: '#9b87f5',
+            dark: '#7E69AB',
+          },
+          gray: {
+            light: '#F1F0FB',
+            DEFAULT: '#8E9196',
+            dark: '#1A1F2C',
+          },
+        },
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

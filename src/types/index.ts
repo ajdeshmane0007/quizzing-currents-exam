@@ -1,4 +1,3 @@
-
 export type UserRole = 'admin' | 'student';
 
 export interface User {
@@ -7,6 +6,7 @@ export interface User {
   email: string;
   role: UserRole;
   avatarUrl?: string;
+  tokens: number; // Added tokens property
 }
 
 export interface Question {

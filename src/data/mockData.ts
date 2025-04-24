@@ -1,28 +1,36 @@
-
 import { User, Quiz, CurrentAffair, Exam, QuizResult } from '../types';
 
-// Mock Users
+// Generate mock users with tokens
 export const mockUsers: User[] = [
   {
     id: '1',
     name: 'Admin User',
-    email: 'admin@quizapp.com',
+    email: 'admin@example.com',
     role: 'admin',
-    avatarUrl: 'https://i.pravatar.cc/150?u=admin',
+    avatarUrl: 'https://api.dicebear.com/6.x/avataaars/svg?seed=admin',
+    tokens: 999, // Admins have unlimited tokens
   },
   {
     id: '2',
-    name: 'John Student',
-    email: 'john@quizapp.com',
+    name: 'Student User',
+    email: 'student@example.com',
     role: 'student',
-    avatarUrl: 'https://i.pravatar.cc/150?u=john',
+    avatarUrl: 'https://api.dicebear.com/6.x/avataaars/svg?seed=student',
+    tokens: 10, // Students start with 10 tokens
   },
   {
     id: '3',
-    name: 'Sarah Student',
-    email: 'sarah@quizapp.com',
+    name: 'Demo Admin',
+    email: 'demo.admin@example.com',
+    role: 'admin',
+    tokens: 999,
+  },
+  {
+    id: '4',
+    name: 'Demo Student',
+    email: 'demo.student@example.com', 
     role: 'student',
-    avatarUrl: 'https://i.pravatar.cc/150?u=sarah',
+    tokens: 5,
   },
 ];
 

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User, Quiz, CurrentAffair, Exam, QuizResult } from '../types';
 import { 
@@ -7,6 +8,7 @@ import {
   mockExams, 
   mockQuizResults 
 } from '../data/mockData';
+import { toast } from '@/hooks/use-toast';
 
 interface AppContextType {
   // Auth
@@ -35,6 +37,10 @@ interface AppContextType {
   
   // Student functions
   submitQuizResult: (result: Omit<QuizResult, 'completedAt'>) => void;
+
+  // Token functions
+  addTokens: (amount: number) => void;
+  consumeTokens: (amount: number) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -65,6 +71,34 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   
   const logout = () => {
     setCurrentUser(null);
+  };
+  
+  // Token functions
+  const addTokens = (amount: number) => {
+    if (!currentUser) return;
+    
+    const updatedUser = {
+      ...currentUser,
+      tokens: currentUser.tokens + amount
+    };
+    
+    setCurrentUser(updatedUser);
+    toast({
+      title: "Tokens Added",
+      description: `${amount} token${amount !== 1 ? 's' : ''} have been added to your account.`
+    });
+  };
+  
+  const consumeTokens = (amount: number): boolean => {
+    if (!currentUser || currentUser.tokens < amount) return false;
+    
+    const updatedUser = {
+      ...currentUser,
+      tokens: currentUser.tokens - amount
+    };
+    
+    setCurrentUser(updatedUser);
+    return true;
   };
   
   // Admin functions
@@ -149,6 +183,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         updateExam,
         deleteExam,
         submitQuizResult,
+        addTokens,
+        consumeTokens,
       }}
     >
       {children}

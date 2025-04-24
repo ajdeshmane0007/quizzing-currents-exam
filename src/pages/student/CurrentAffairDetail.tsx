@@ -6,6 +6,8 @@ import MainLayout from '@/layouts/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
+import LockContent from '@/components/common/LockContent';
+import TokenDisplay from '@/components/common/TokenDisplay';
 
 const CurrentAffairDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -37,14 +39,17 @@ const CurrentAffairDetail: React.FC = () => {
 
   return (
     <MainLayout>
-      <Button 
-        variant="ghost" 
-        className="mb-4" 
-        onClick={() => navigate('/current-affairs')}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Current Affairs
-      </Button>
+      <div className="flex justify-between items-center mb-4">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/current-affairs')}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Current Affairs
+        </Button>
+        
+        <TokenDisplay />
+      </div>
 
       <article className="prose prose-slate max-w-none">
         {article.imageUrl && (
@@ -64,19 +69,24 @@ const CurrentAffairDetail: React.FC = () => {
         
         <h1 className="text-3xl font-bold">{article.title}</h1>
         
-        <div className="mt-6 space-y-4">
-          {article.content.split('\n').map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </div>
+        <LockContent
+          title="Premium Content"
+          description="You need a token to view this current affair article."
+        >
+          <div className="mt-6 space-y-4">
+            {article.content.split('\n').map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
 
-        <div className="mt-8 flex flex-wrap gap-2">
-          {article.tags.map((tag) => (
-            <Badge key={tag} variant="outline">
-              {tag}
-            </Badge>
-          ))}
-        </div>
+          <div className="mt-8 flex flex-wrap gap-2">
+            {article.tags.map((tag) => (
+              <Badge key={tag} variant="outline">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </LockContent>
       </article>
     </MainLayout>
   );

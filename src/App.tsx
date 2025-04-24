@@ -20,6 +20,8 @@ import Exams from "./pages/student/Exams";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminCurrentAffairs from "./pages/admin/CurrentAffairs";
+import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
 
 // Other Pages
 import NotFound from "./pages/NotFound";
@@ -53,6 +55,9 @@ const App = () => (
             {/* Admin Routes */}
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/current-affairs" element={<AdminCurrentAffairs />} />
+              <Route path="/admin/current-affairs/new" element={<AdminCurrentAffairForm />} />
+              <Route path="/admin/current-affairs/:id" element={<AdminCurrentAffairForm />} />
             </Route>
 
             {/* Fallback Routes */}

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -60,6 +61,9 @@ const App = () => (
               <Route path="/admin/current-affairs/:id" element={<AdminCurrentAffairForm />} />
             </Route>
 
+            {/* Redirect root admin path to admin dashboard */}
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+            
             {/* Fallback Routes */}
             <Route path="*" element={<NotFound />} />
           </Routes>

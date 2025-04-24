@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Book } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,6 +17,7 @@ const Login: React.FC = () => {
   
   const { login } = useApp();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,19 +25,37 @@ const Login: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // For demo purposes, use these credentials:
+      // For demo purposes, you can use these credentials:
       // Admin: admin@quizapp.com (any password)
       // Student: john@quizapp.com or sarah@quizapp.com (any password)
+      console.log("Attempting to login with:", email);
       const success = await login(email, password);
       
       if (success) {
+        // Show success toast
+        toast({
+          title: "Login successful!",
+          description: "Welcome back to QuizMaster.",
+          variant: "default",
+        });
+        
         // Redirect based on user role (will be handled by ProtectedRoute)
         navigate('/');
       } else {
         setError('Invalid email or password');
+        toast({
+          title: "Login failed",
+          description: "Please check your credentials and try again.",
+          variant: "destructive",
+        });
       }
     } catch (err) {
       setError('Something went wrong. Please try again.');
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -51,6 +71,11 @@ const Login: React.FC = () => {
           <CardTitle className="text-center text-2xl font-bold">Login to QuizMaster</CardTitle>
           <CardDescription className="text-center">
             Enter your email and password to access your account
+          </CardDescription>
+          <CardDescription className="text-center font-medium text-quiz-purple">
+            Demo accounts: 
+            <br/>Admin: admin@quizapp.com (any password)
+            <br/>Student: john@quizapp.com (any password)
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>

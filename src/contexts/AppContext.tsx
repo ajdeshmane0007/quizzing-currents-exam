@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User, Quiz, CurrentAffair, Exam, QuizResult } from '../types';
 import { 
@@ -51,11 +50,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const login = async (email: string, password: string): Promise<boolean> => {
     // In a real app, this would validate against a backend
     // For now, we'll just check if the user exists in our mock data
-    const user = mockUsers.find(u => u.email === email);
+    const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    
     if (user) {
+      // For demo purposes, we'll accept any password
+      console.log("User found, logging in:", user);
       setCurrentUser(user);
       return true;
     }
+    
+    console.log("Login failed, user not found:", email);
     return false;
   };
   

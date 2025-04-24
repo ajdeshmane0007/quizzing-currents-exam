@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Book } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import TokenDisplay from '@/components/common/TokenDisplay';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -25,9 +26,6 @@ const Login: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // For demo purposes, you can use these credentials:
-      // Admin: admin@quizapp.com (any password)
-      // Student: john@quizapp.com or sarah@quizapp.com (any password)
       console.log("Attempting to login with:", email);
       const success = await login(email, password);
       
@@ -74,8 +72,8 @@ const Login: React.FC = () => {
           </CardDescription>
           <CardDescription className="text-center font-medium text-quiz-purple">
             Demo accounts: 
-            <br/>Admin: admin@quizapp.com (any password)
-            <br/>Student: john@quizapp.com (any password)
+            <br/>Admin: admin@example.com (any password)
+            <br/>Student: student@example.com (any password)
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>

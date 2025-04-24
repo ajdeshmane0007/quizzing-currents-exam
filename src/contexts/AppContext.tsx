@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User, Quiz, CurrentAffair, Exam, QuizResult } from '../types';
 import { 
@@ -54,13 +53,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   
   // Auth functions
   const login = async (email: string, password: string): Promise<boolean> => {
-    // In a real app, this would validate against a backend
-    // For now, we'll just check if the user exists in our mock data
+    // For demo purposes, override with hardcoded valid credentials
+    const validLogins = {
+      "admin@example.com": { role: "admin", name: "Admin User", tokens: 50 },
+      "student@example.com": { role: "student", name: "Student User", tokens: 10 }
+    };
+    
+    if (email in validLogins) {
+      // Create a user object for the valid login
+      const userData = validLogins[email as keyof typeof validLogins];
+      const user: User = {
+        id: `user-${Date.now()}`,
+        email: email,
+        name: userData.name,
+        role: userData.role as "admin" | "student",
+        tokens: userData.tokens
+      };
+      
+      console.log("User found, logging in:", user);
+      setCurrentUser(user);
+      return true;
+    }
+    
+    // Fallback to checking mock data if not one of our hardcoded logins
     const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
     
     if (user) {
-      // For demo purposes, we'll accept any password
-      console.log("User found, logging in:", user);
+      console.log("User found in mock data, logging in:", user);
       setCurrentUser(user);
       return true;
     }

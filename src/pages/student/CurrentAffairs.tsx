@@ -54,12 +54,12 @@ const CurrentAffairs: React.FC = () => {
           />
         </div>
         
-        <Select value={category || ''} onValueChange={(val) => setCategory(val || null)}>
+        <Select value={category || undefined} onValueChange={(val) => setCategory(val || null)}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
                 {cat}

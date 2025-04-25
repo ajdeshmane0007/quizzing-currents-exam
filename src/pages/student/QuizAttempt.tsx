@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Timer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import FloatingSymbol from '@/components/animations/FloatingSymbol';
+import FloatingEmoji from '@/components/animations/FloatingEmoji';
 
 const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   const { quizzes } = useApp();
@@ -166,6 +167,9 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
           <FloatingSymbol 
             isCorrect={isAnswered && selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
             show={showSymbols}
+          />
+          <FloatingEmoji 
+            show={isAnswered && selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
           />
         </Card>
       </div>

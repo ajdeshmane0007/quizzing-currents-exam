@@ -5,47 +5,128 @@ import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import LockContent from '@/components/common/LockContent';
 import TokenDisplay from '@/components/common/TokenDisplay';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { Check, Timer } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-// This is a mock component since we don't have the full implementation
-// You would replace this with your actual QuizAttempt implementation
 const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   const { quizzes } = useApp();
   const quiz = quizzes.find(q => q.id === quizId);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
+  const [timeLeft, setTimeLeft] = useState(10);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [isCelebrating, setIsCelebrating] = useState(false);
   
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (timeLeft > 0 && !isAnswered) {
+      timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
+    } else if (timeLeft === 0 && !isAnswered) {
+      handleAnswerSubmit(-1); // Auto-submit when time runs out
+    }
+    return () => clearTimeout(timer);
+  }, [timeLeft, isAnswered]);
+
+  useEffect(() => {
+    // Reset timer and states when moving to next question
+    setTimeLeft(10);
+    setIsAnswered(false);
+    setIsCelebrating(false);
+  }, [currentQuestionIndex]);
+
   if (!quiz) {
     return <div>Quiz not found</div>;
   }
-  
+
+  const currentQuestion = quiz.questions[currentQuestionIndex];
+
+  const handleAnswerSubmit = (selectedOptionIndex: number) => {
+    if (isAnswered) return;
+    
+    setIsAnswered(true);
+    const isCorrect = selectedOptionIndex === currentQuestion.correctOptionIndex;
+    
+    if (isCorrect) {
+      setIsCelebrating(true);
+      setTimeout(() => {
+        setIsCelebrating(false);
+      }, 1500);
+    }
+
+    setSelectedAnswers([...selectedAnswers, selectedOptionIndex]);
+
+    // Move to next question after a delay
+    setTimeout(() => {
+      if (currentQuestionIndex < quiz.questions.length - 1) {
+        setCurrentQuestionIndex(prev => prev + 1);
+      }
+    }, 2000);
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{quiz.title}</h1>
-      <p className="text-gray-600">{quiz.description}</p>
-      
-      {/* Mock quiz question display */}
-      <div className="space-y-8 mt-8">
-        {quiz.questions.map((question, idx) => (
-          <div key={idx} className="border p-6 rounded-lg">
-            <h3 className="text-xl font-medium mb-4">Question {idx + 1}: {question.text}</h3>
-            <div className="space-y-2">
-              {question.options.map((option, optIdx) => (
-                <div key={optIdx} className="flex items-center gap-2 p-3 border rounded hover:bg-gray-50 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    id={`q${idx}-opt${optIdx}`} 
-                    name={`question-${idx}`} 
-                  />
-                  <label htmlFor={`q${idx}-opt${optIdx}`}>{option}</label>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">{quiz.title}</h1>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Timer className="h-5 w-5" />
+          <span>{timeLeft}s</span>
+        </div>
       </div>
+
+      <Card className={cn(
+        "transition-all duration-300",
+        isCelebrating && "animate-scale-in bg-gradient-to-r from-purple-100 via-pink-100 to-blue-100"
+      )}>
+        <CardHeader>
+          <CardTitle>Question {currentQuestionIndex + 1}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-lg mb-6">{currentQuestion.text}</p>
+          
+          <div className="space-y-3">
+            {currentQuestion.options.map((option, optIdx) => (
+              <HoverCard key={optIdx}>
+                <HoverCardTrigger asChild>
+                  <div
+                    onClick={() => !isAnswered && handleAnswerSubmit(optIdx)}
+                    className={cn(
+                      "flex items-center gap-3 p-4 rounded-lg border cursor-pointer transition-all",
+                      !isAnswered && "hover:bg-accent hover:border-accent",
+                      isAnswered && optIdx === currentQuestion.correctOptionIndex && "bg-green-100 border-green-500",
+                      isAnswered && optIdx !== currentQuestion.correctOptionIndex && selectedAnswers[currentQuestionIndex] === optIdx && "bg-red-100 border-red-500"
+                    )}
+                  >
+                    <div className="flex-1">{option}</div>
+                    {isAnswered && optIdx === currentQuestion.correctOptionIndex && (
+                      <Check className="h-5 w-5 text-green-600" />
+                    )}
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80">
+                  {isAnswered ? (
+                    optIdx === currentQuestion.correctOptionIndex ? 
+                    "Correct answer! Well done!" : 
+                    "Not quite right. Keep trying!"
+                  ) : (
+                    "Click to select this answer"
+                  )}
+                </HoverCardContent>
+              </HoverCard>
+            ))}
+          </div>
+          
+          <div className="mt-4 text-sm text-muted-foreground">
+            Question {currentQuestionIndex + 1} of {quiz.questions.length}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-const QuizAttempt: React.FC = () => {
+const QuizAttempt = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { quizzes } = useApp();

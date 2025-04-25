@@ -32,15 +32,15 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
   const getEmoji = (type: number) => {
     switch (type) {
       case 0:
-        return <Star className="w-6 h-6 text-yellow-400" />;
+        return <Star className="w-12 h-12 text-yellow-400" />;
       case 1:
-        return <Trophy className="w-6 h-6 text-yellow-500" />;
+        return <Trophy className="w-12 h-12 text-yellow-500" />;
       case 2:
-        return <PartyPopper className="w-6 h-6 text-purple-500" />;
+        return <PartyPopper className="w-12 h-12 text-purple-500" />;
       case 3:
-        return <Award className="w-6 h-6 text-blue-500" />;
+        return <Award className="w-12 h-12 text-blue-500" />;
       default:
-        return <Sparkles className="w-6 h-6 text-pink-500" />;
+        return <Sparkles className="w-12 h-12 text-pink-500" />;
     }
   };
 

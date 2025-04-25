@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
-import LockContent from '@/components/common/LockContent';
 import TokenDisplay from '@/components/common/TokenDisplay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Timer } from 'lucide-react';
@@ -11,7 +10,7 @@ import FloatingSymbol from '@/components/animations/FloatingSymbol';
 import FloatingEmoji from '@/components/animations/FloatingEmoji';
 
 const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
-  const { quizzes } = useApp();
+  const { quizzes, consumeTokens } = useApp();
   const quiz = quizzes.find(q => q.id === quizId);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
@@ -39,6 +38,12 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
     setShowSymbols(false);
     setDragX(0);
   }, [currentQuestionIndex]);
+
+  useEffect(() => {
+    if (currentQuestionIndex > 0) {
+      consumeTokens(1);
+    }
+  }, [currentQuestionIndex, consumeTokens]);
 
   if (!quiz) return <div>Quiz not found</div>;
 
@@ -114,9 +119,12 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">{quiz.title}</h1>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Timer className="h-5 w-5" />
-          <span>{timeLeft}s</span>
+        <div className="flex items-center gap-4">
+          <TokenDisplay showAddButton={false} />
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Timer className="h-5 w-5" />
+            <span>{timeLeft}s</span>
+          </div>
         </div>
       </div>
 
@@ -213,13 +221,7 @@ const QuizAttempt = () => {
         <TokenDisplay />
       </div>
       
-      <LockContent 
-        tokenCost={1}
-        title="Quiz Access"
-        description={`This quiz requires 1 token to attempt. There are ${quiz.questions.length} questions.`}
-      >
-        <QuizAttemptContent quizId={id!} />
-      </LockContent>
+      <QuizAttemptContent quizId={id!} />
     </MainLayout>
   );
 };

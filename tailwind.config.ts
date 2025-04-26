@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -110,11 +109,11 @@ export default {
 				},
 				float: {
 					'0%': { 
-						transform: 'translateY(0) scale(1)',
+						transform: 'translateY(0) scale(1) rotate(0deg)',
 						opacity: '1'
 					},
 					'100%': { 
-						transform: 'translateY(-120px) scale(0.5)',
+						transform: 'translateY(-150px) scale(0.5) rotate(360deg)',
 						opacity: '0'
 					}
 				},
@@ -128,6 +127,9 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'float': 'float 2.5s ease-in-out',
 				'pulse': 'pulse 2s ease-in-out infinite'
+			},
+			scale: {
+				'102': '1.02',
 			}
 		}
 	},

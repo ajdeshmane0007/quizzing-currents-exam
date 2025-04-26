@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -163,97 +164,99 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
       ) : showAd ? (
         <AdDisplay onClose={() => setShowAd(false)} />
       ) : (
-        <div className="flex justify-between items-center mb-4 bg-white/50 backdrop-blur-sm rounded-xl p-4">
-          <h1 className="text-3xl font-bold text-quiz-purple">{quiz.title}</h1>
-          <div className="flex items-center gap-4">
-            <TokenDisplay showAddButton={false} />
-            <div className="flex items-center gap-2 bg-quiz-purple-light text-quiz-purple px-3 py-1 rounded-full">
-              <Timer className="h-5 w-5" />
-              <span>{timeLeft}s</span>
+        <>
+          <div className="flex justify-between items-center mb-4 bg-white/50 backdrop-blur-sm rounded-xl p-4">
+            <h1 className="text-3xl font-bold text-quiz-purple">{quiz.title}</h1>
+            <div className="flex items-center gap-4">
+              <TokenDisplay showAddButton={false} />
+              <div className="flex items-center gap-2 bg-quiz-purple-light text-quiz-purple px-3 py-1 rounded-full">
+                <Timer className="h-5 w-5" />
+                <span>{timeLeft}s</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="relative min-h-[600px] w-full">
-          <Card 
-            className={cn(
-              "quiz-card absolute inset-0 transition-all duration-300 cursor-grab active:cursor-grabbing overflow-hidden shadow-2xl",
-              isCelebrating && "bg-gradient-to-r from-quiz-purple-light via-white to-quiz-purple-light",
-              isDragging && "transition-none"
-            )}
-            onMouseDown={handleDragStart}
-            onMouseMove={handleDragMove}
-            onMouseUp={handleDragEnd}
-            onMouseLeave={handleDragEnd}
-            onTouchStart={handleDragStart}
-            onTouchMove={handleDragMove}
-            onTouchEnd={handleDragEnd}
-          >
-            <CardHeader className="bg-gradient-to-br from-quiz-purple/5 to-quiz-purple/10 pb-4">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-quiz-purple">Question {currentQuestionIndex + 1}</CardTitle>
-                <span className="text-sm text-quiz-purple bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
-                  {currentQuestionIndex + 1} of {quiz.questions.length}
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              {currentQuestion.image && (
-                <div className="mb-6 rounded-lg overflow-hidden">
-                  <img 
-                    src={currentQuestion.image} 
-                    alt="Question illustration" 
-                    className="w-full h-48 object-cover rounded-lg shadow-md"
-                  />
-                </div>
+          <div className="relative min-h-[600px] w-full">
+            <Card 
+              className={cn(
+                "quiz-card absolute inset-0 transition-all duration-300 cursor-grab active:cursor-grabbing overflow-hidden shadow-2xl",
+                isCelebrating && "bg-gradient-to-r from-quiz-purple-light via-white to-quiz-purple-light",
+                isDragging && "transition-none"
               )}
-              
-              <p className="text-xl mb-8 font-medium leading-relaxed">{currentQuestion.text}</p>
-              
-              <div className="space-y-4 max-w-2xl mx-auto">
-                {currentQuestion.options.map((option, optIdx) => (
-                  <div
-                    key={optIdx}
-                    onClick={() => !isAnswered && handleAnswer(optIdx)}
-                    className={cn(
-                      "quiz-option group hover:shadow-lg",
-                      !isAnswered && "hover:bg-quiz-purple-light hover:border-quiz-purple transform transition-all duration-200 hover:scale-102",
-                      isAnswered && optIdx === currentQuestion.correctOptionIndex && "quiz-option-correct",
-                      isAnswered && optIdx !== currentQuestion.correctOptionIndex && 
-                      selectedAnswers[currentQuestionIndex] === optIdx && "quiz-option-incorrect"
-                    )}
-                  >
-                    <div className={cn(
-                      "flex items-center justify-center w-10 h-10 rounded-full shrink-0 transition-colors duration-200",
-                      isAnswered && optIdx === currentQuestion.correctOptionIndex ? "bg-quiz-green text-white" : 
-                      isAnswered && selectedAnswers[currentQuestionIndex] === optIdx && optIdx !== currentQuestion.correctOptionIndex ? "bg-quiz-red text-white" :
-                      "bg-quiz-purple-light text-quiz-purple group-hover:bg-quiz-purple group-hover:text-white"
-                    )}>
-                      {isAnswered && optIdx === currentQuestion.correctOptionIndex ? (
-                        <Check className="h-6 w-6" />
-                      ) : isAnswered && selectedAnswers[currentQuestionIndex] === optIdx && optIdx !== currentQuestion.correctOptionIndex ? (
-                        <X className="h-6 w-6" />
-                      ) : String.fromCharCode(65 + optIdx)}
-                    </div>
-                    <span className="text-lg">{option}</span>
+              onMouseDown={handleDragStart}
+              onMouseMove={handleDragMove}
+              onMouseUp={handleDragEnd}
+              onMouseLeave={handleDragEnd}
+              onTouchStart={handleDragStart}
+              onTouchMove={handleDragMove}
+              onTouchEnd={handleDragEnd}
+            >
+              <CardHeader className="bg-gradient-to-br from-quiz-purple/5 to-quiz-purple/10 pb-4">
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-quiz-purple">Question {currentQuestionIndex + 1}</CardTitle>
+                  <span className="text-sm text-quiz-purple bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm">
+                    {currentQuestionIndex + 1} of {quiz.questions.length}
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-4">
+                {currentQuestion.image && (
+                  <div className="mb-6 rounded-lg overflow-hidden">
+                    <img 
+                      src={currentQuestion.image} 
+                      alt="Question illustration" 
+                      className="w-full h-48 object-cover rounded-lg shadow-md"
+                    />
                   </div>
-                ))}
-              </div>
+                )}
+                
+                <p className="text-xl mb-8 font-medium leading-relaxed">{currentQuestion.text}</p>
+                
+                <div className="space-y-4 max-w-2xl mx-auto">
+                  {currentQuestion.options.map((option, optIdx) => (
+                    <div
+                      key={optIdx}
+                      onClick={() => !isAnswered && handleAnswer(optIdx)}
+                      className={cn(
+                        "quiz-option group hover:shadow-lg",
+                        !isAnswered && "hover:bg-quiz-purple-light hover:border-quiz-purple transform transition-all duration-200 hover:scale-102",
+                        isAnswered && optIdx === currentQuestion.correctOptionIndex && "quiz-option-correct",
+                        isAnswered && optIdx !== currentQuestion.correctOptionIndex && 
+                        selectedAnswers[currentQuestionIndex] === optIdx && "quiz-option-incorrect"
+                      )}
+                    >
+                      <div className={cn(
+                        "flex items-center justify-center w-10 h-10 rounded-full shrink-0 transition-colors duration-200",
+                        isAnswered && optIdx === currentQuestion.correctOptionIndex ? "bg-quiz-green text-white" : 
+                        isAnswered && selectedAnswers[currentQuestionIndex] === optIdx && optIdx !== currentQuestion.correctOptionIndex ? "bg-quiz-red text-white" :
+                        "bg-quiz-purple-light text-quiz-purple group-hover:bg-quiz-purple group-hover:text-white"
+                      )}>
+                        {isAnswered && optIdx === currentQuestion.correctOptionIndex ? (
+                          <Check className="h-6 w-6" />
+                        ) : isAnswered && selectedAnswers[currentQuestionIndex] === optIdx && optIdx !== currentQuestion.correctOptionIndex ? (
+                          <X className="h-6 w-6" />
+                        ) : String.fromCharCode(65 + optIdx)}
+                      </div>
+                      <span className="text-lg">{option}</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-8 text-center text-sm text-muted-foreground">
+                  Swipe right for yes, left for no or tap your answer
+                </div>
+              </CardContent>
               
-              <div className="mt-8 text-center text-sm text-muted-foreground">
-                Swipe right for yes, left for no or tap your answer
-              </div>
-            </CardContent>
-            
-            <FloatingSymbol 
-              isCorrect={isAnswered && selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
-              show={showSymbols}
-            />
-            <FloatingEmoji 
-              show={isAnswered && selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
-            />
-          </Card>
-        </div>
+              <FloatingSymbol 
+                isCorrect={isAnswered && selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
+                show={showSymbols}
+              />
+              <FloatingEmoji 
+                show={isAnswered && selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
+              />
+            </Card>
+          </div>
+        </>
       )}
     </div>
   );

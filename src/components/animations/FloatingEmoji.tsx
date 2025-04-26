@@ -13,12 +13,12 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
     if (show) {
       const newEmojis = Array.from({ length: 30 }, (_, i) => ({
         id: Date.now() + i,
-        x: Math.random() * 100, // Random X position across full width
-        y: Math.random() * 100, // Random Y position across full height
+        x: Math.random() * 100,
+        y: Math.random() * 100,
         type: Math.floor(Math.random() * 4),
-        scale: Math.random() * 1.5 + 1.5, // Larger scale between 1.5 and 3
-        delay: Math.random() * 1500, // More varied delays
-        rotation: Math.random() * 720 - 360 // Random rotation between -360 and 360 degrees
+        scale: Math.random() * 0.5 + 0.75, // Adjusted scale for 123x120px size
+        delay: Math.random() * 1500,
+        rotation: Math.random() * 720 - 360
       }));
       setEmojis(newEmojis);
 
@@ -35,13 +35,13 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
   const getEmoji = (type: number) => {
     switch (type) {
       case 0:
-        return <Star className="w-24 h-24 text-yellow-400" />;
+        return <Star className="w-[123px] h-[120px] text-yellow-400" />;
       case 1:
-        return <Trophy className="w-24 h-24 text-yellow-500" />;
+        return <Trophy className="w-[123px] h-[120px] text-yellow-500" />;
       case 2:
-        return <PartyPopper className="w-24 h-24 text-purple-500" />;
+        return <PartyPopper className="w-[123px] h-[120px] text-purple-500" />;
       default:
-        return <Award className="w-24 h-24 text-blue-500" />;
+        return <Award className="w-[123px] h-[120px] text-blue-500" />;
     }
   };
 

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,7 +33,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 260 74% 74%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 260 24% 54%;
     --sidebar-foreground: 210 40% 98%;
@@ -90,5 +91,27 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .quiz-card {
+    @apply bg-white shadow-lg rounded-xl border-0 transition-all;
+  }
+  
+  .quiz-option {
+    @apply p-4 rounded-lg border cursor-pointer transition-all flex items-center gap-3;
+  }
+  
+  .quiz-option:hover {
+    @apply bg-quiz-purple-light border-quiz-purple;
+  }
+  
+  .quiz-option-correct {
+    @apply bg-quiz-green-light border-quiz-green text-quiz-green-dark;
+  }
+  
+  .quiz-option-incorrect {
+    @apply bg-quiz-red-light border-quiz-red text-quiz-red-dark;
   }
 }

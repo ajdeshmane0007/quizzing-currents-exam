@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import TokenDisplay from '@/components/common/TokenDisplay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Timer } from 'lucide-react';
+import { Timer, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import FloatingSymbol from '@/components/animations/FloatingSymbol';
 import FloatingEmoji from '@/components/animations/FloatingEmoji';
@@ -14,7 +15,7 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   const quiz = quizzes.find(q => q.id === quizId);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(15); // Increased time for better user experience
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCelebrating, setIsCelebrating] = useState(false);
   const [showSymbols, setShowSymbols] = useState(false);
@@ -32,7 +33,7 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   }, [timeLeft, isAnswered]);
 
   useEffect(() => {
-    setTimeLeft(10);
+    setTimeLeft(15);
     setIsAnswered(false);
     setIsCelebrating(false);
     setShowSymbols(false);
@@ -61,12 +62,12 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
       setTimeout(() => {
         setIsCelebrating(false);
         setShowSymbols(false);
-      }, 1500);
+      }, 2000);
     } else {
       setShowSymbols(true);
       setTimeout(() => {
         setShowSymbols(false);
-      }, 1500);
+      }, 2000);
     }
 
     setSelectedAnswers([...selectedAnswers, selectedOptionIndex]);
@@ -75,7 +76,7 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
       if (currentQuestionIndex < quiz.questions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
       }
-    }, 2000);
+    }, 2500);
   };
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
@@ -118,21 +119,21 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">{quiz.title}</h1>
+        <h1 className="text-3xl font-bold text-quiz-purple">{quiz.title}</h1>
         <div className="flex items-center gap-4">
           <TokenDisplay showAddButton={false} />
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 bg-quiz-purple-light text-quiz-purple px-3 py-1 rounded-full">
             <Timer className="h-5 w-5" />
             <span>{timeLeft}s</span>
           </div>
         </div>
       </div>
 
-      <div className="relative h-[400px]">
+      <div className="relative h-[500px]">
         <Card 
           className={cn(
-            "quiz-card absolute inset-0 transition-all duration-300 cursor-grab active:cursor-grabbing",
-            isCelebrating && "bg-gradient-to-r from-purple-100 via-pink-100 to-blue-100",
+            "quiz-card absolute inset-0 transition-all duration-300 cursor-grab active:cursor-grabbing overflow-hidden",
+            isCelebrating && "bg-gradient-to-r from-quiz-purple-light via-white to-quiz-purple-light",
             isDragging && "transition-none"
           )}
           onMouseDown={handleDragStart}
@@ -143,32 +144,60 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
           onTouchMove={handleDragMove}
           onTouchEnd={handleDragEnd}
         >
-          <CardHeader>
-            <CardTitle>Question {currentQuestionIndex + 1}</CardTitle>
+          <CardHeader className="bg-quiz-purple/10 pb-4">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-quiz-purple">Question {currentQuestionIndex + 1}</CardTitle>
+              <span className="text-sm text-quiz-purple bg-white px-3 py-1 rounded-full shadow-sm">
+                {currentQuestionIndex + 1} of {quiz.questions.length}
+              </span>
+            </div>
           </CardHeader>
-          <CardContent>
-            <p className="text-lg mb-6">{currentQuestion.text}</p>
+          <CardContent className="pt-4">
+            {/* Image support (placeholder for now) */}
+            {currentQuestion.image && (
+              <div className="mb-6 rounded-lg overflow-hidden">
+                <img 
+                  src={currentQuestion.image} 
+                  alt="Question illustration" 
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+            )}
             
-            <div className="space-y-3">
+            <p className="text-xl mb-6 font-medium">{currentQuestion.text}</p>
+            
+            <div className="space-y-4">
               {currentQuestion.options.map((option, optIdx) => (
                 <div
                   key={optIdx}
                   onClick={() => !isAnswered && handleAnswerSubmit(optIdx)}
                   className={cn(
-                    "p-4 rounded-lg border cursor-pointer transition-all",
+                    "quiz-option",
                     !isAnswered && "hover:bg-accent hover:border-accent",
-                    isAnswered && optIdx === currentQuestion.correctOptionIndex && "bg-green-100 border-green-500",
+                    isAnswered && optIdx === currentQuestion.correctOptionIndex && "quiz-option-correct",
                     isAnswered && optIdx !== currentQuestion.correctOptionIndex && 
-                    selectedAnswers[currentQuestionIndex] === optIdx && "bg-red-100 border-red-500"
+                    selectedAnswers[currentQuestionIndex] === optIdx && "quiz-option-incorrect"
                   )}
                 >
-                  {option}
+                  <div className={cn(
+                    "flex items-center justify-center w-8 h-8 rounded-full shrink-0",
+                    isAnswered && optIdx === currentQuestion.correctOptionIndex ? "bg-quiz-green text-white" : 
+                    isAnswered && selectedAnswers[currentQuestionIndex] === optIdx && optIdx !== currentQuestion.correctOptionIndex ? "bg-quiz-red text-white" :
+                    "bg-quiz-purple-light text-quiz-purple"
+                  )}>
+                    {isAnswered && optIdx === currentQuestion.correctOptionIndex ? (
+                      <Check className="h-5 w-5" />
+                    ) : isAnswered && selectedAnswers[currentQuestionIndex] === optIdx && optIdx !== currentQuestion.correctOptionIndex ? (
+                      <X className="h-5 w-5" />
+                    ) : String.fromCharCode(65 + optIdx)}
+                  </div>
+                  <span>{option}</span>
                 </div>
               ))}
             </div>
             
-            <div className="mt-4 text-sm text-muted-foreground">
-              Question {currentQuestionIndex + 1} of {quiz.questions.length}
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              Swipe right for yes, left for no or tap on your answer
             </div>
           </CardContent>
           

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -54,14 +55,24 @@ export default {
 				},
         quiz: {
           purple: {
-            light: '#E5DEFF',
+            light: '#F0EAFF',
             DEFAULT: '#9b87f5',
             dark: '#7E69AB',
           },
           gray: {
-            light: '#F1F0FB',
+            light: '#F9F8FF',
             DEFAULT: '#8E9196',
             dark: '#1A1F2C',
+          },
+          green: {
+            light: '#E8FFF0',
+            DEFAULT: '#4ADE80',
+            dark: '#22C55E',
+          },
+          red: {
+            light: '#FFF0F0',
+            DEFAULT: '#F87171',
+            dark: '#EF4444',
           },
         },
 				sidebar: {
@@ -103,15 +114,20 @@ export default {
 						opacity: '1'
 					},
 					'100%': { 
-						transform: 'translateY(-100px) scale(0.5)',
+						transform: 'translateY(-120px) scale(0.5)',
 						opacity: '0'
 					}
+				},
+				pulse: {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'float': 'float 2s ease-in-out'
+				'float': 'float 2.5s ease-in-out',
+				'pulse': 'pulse 2s ease-in-out infinite'
 			}
 		}
 	},

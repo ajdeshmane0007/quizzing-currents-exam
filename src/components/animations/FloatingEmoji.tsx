@@ -8,20 +8,22 @@ interface FloatingEmojiProps {
 }
 
 const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
-  const [emojis, setEmojis] = useState<{ id: number; x: number; type: number }[]>([]);
+  const [emojis, setEmojis] = useState<{ id: number; x: number; type: number; scale: number; delay: number }[]>([]);
   
   useEffect(() => {
     if (show) {
-      const newEmojis = Array.from({ length: 8 }, (_, i) => ({
+      const newEmojis = Array.from({ length: 12 }, (_, i) => ({
         id: Date.now() + i,
         x: Math.random() * 80 + 10, // Random X position between 10% and 90%
         type: Math.floor(Math.random() * 5), // Random emoji type
+        scale: Math.random() * 0.5 + 0.8, // Random scale between 0.8 and 1.3
+        delay: Math.random() * 500, // Random delay for staggered animation
       }));
       setEmojis(newEmojis);
 
       const timer = setTimeout(() => {
         setEmojis([]);
-      }, 2000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -49,10 +51,12 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
       {emojis.map((emoji) => (
         <div
           key={emoji.id}
-          className={cn(
-            "absolute bottom-0 animate-[float_2s_ease-in-out]"
-          )}
-          style={{ left: `${emoji.x}%` }}
+          className="absolute bottom-0 animate-[float_2s_ease-in-out]"
+          style={{ 
+            left: `${emoji.x}%`, 
+            transform: `scale(${emoji.scale})`,
+            animationDelay: `${emoji.delay}ms` 
+          }}
         >
           {getEmoji(emoji.type)}
         </div>

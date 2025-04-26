@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -12,6 +11,7 @@ import FloatingEmoji from '@/components/animations/FloatingEmoji';
 import ScoreBoard from '@/components/quiz/ScoreBoard';
 import AdDisplay from '@/components/quiz/AdDisplay';
 import { toast } from '@/hooks/use-toast';
+import { TokenService } from '@/services/TokenService';
 
 interface Question {
   text: string;
@@ -21,7 +21,7 @@ interface Question {
 }
 
 const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
-  const { quizzes, consumeTokens, TokenService, currentUser } = useApp();
+  const { quizzes, consumeTokens, currentUser } = useApp();
   const quiz = quizzes.find(q => q.id === quizId);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);

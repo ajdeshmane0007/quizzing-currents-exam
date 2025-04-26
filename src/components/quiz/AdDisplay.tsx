@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Ad } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface AdDisplayProps {
@@ -14,7 +14,7 @@ const AdDisplay: React.FC<AdDisplayProps> = ({ onClose }) => {
       <Card className="max-w-lg w-full bg-white">
         <CardHeader className="text-center">
           <CardTitle className="flex items-center justify-center gap-2">
-            <Ad className="w-6 h-6" />
+            <AlertCircle className="w-6 h-6" />
             Advertisement
           </CardTitle>
         </CardHeader>

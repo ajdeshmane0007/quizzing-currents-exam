@@ -84,20 +84,11 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
     setIsAnswered(true);
     const isCorrect = selectedOptionIndex === currentQuestion.correctOptionIndex;
     
-    if (isCorrect) {
-      setIsCelebrating(true);
-      setShowSymbols(true);
-      setTimeout(() => {
-        setIsCelebrating(false);
-        setShowSymbols(false);
-      }, 2000);
-    } else {
-      setShowSymbols(true);
-      setTimeout(() => {
-        setShowSymbols(false);
-      }, 2000);
-    }
-
+    // Always show celebration emojis, whether correct or incorrect
+    setShowSymbols(true);
+    
+    // We don't need to conditionally show celebrations anymore as the FloatingEmoji
+    // component now handles this internally with the isCorrect prop
     setSelectedAnswers([...selectedAnswers, selectedOptionIndex]);
 
     if (currentQuestionIndex === quiz.questions.length - 1) {

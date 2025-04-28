@@ -13,20 +13,21 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
   
   useEffect(() => {
     if (show) {
-      const newEmojis = Array.from({ length: 30 }, (_, i) => ({
+      // Create more emojis (50) for a fuller screen effect
+      const newEmojis = Array.from({ length: 50 }, (_, i) => ({
         id: Date.now() + i,
-        x: Math.random() * 100,
-        y: Math.random() * 100,
+        x: Math.random() * 100, // Random position across the screen
+        y: Math.random() * 100, // Random position across the screen
         type: Math.floor(Math.random() * (isCorrect ? 4 : 1)), // Only X icon for wrong answers
-        scale: Math.random() * 0.5 + 0.75,
-        delay: Math.random() * 1500,
-        rotation: Math.random() * 720 - 360
+        scale: Math.random() * 0.7 + 0.6, // More varied scale for dynamic effect
+        delay: Math.random() * 2000, // More varied delay for natural effect
+        rotation: Math.random() * 720 - 360 // More rotation for dynamic movement
       }));
       setEmojis(newEmojis);
 
       const timer = setTimeout(() => {
         setEmojis([]);
-      }, 4000);
+      }, 4000); // Slightly longer animation duration
 
       return () => clearTimeout(timer);
     }
@@ -54,7 +55,9 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
   return (
     <div className={cn(
       "fixed inset-0 pointer-events-none overflow-hidden z-50",
-      isCorrect ? "bg-black/30" : "bg-black/40"
+      isCorrect 
+        ? "bg-gradient-to-r from-black/20 via-black/30 to-black/20" 
+        : "bg-gradient-to-r from-black/30 via-black/40 to-black/30"
     )}>
       {emojis.map((emoji) => (
         <div

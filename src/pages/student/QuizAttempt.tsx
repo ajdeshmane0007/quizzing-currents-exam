@@ -63,12 +63,8 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
     }
   }, [currentQuestionIndex]);
 
-  useEffect(() => {
-    // We'll only consume 1 token per question, not 10
-    if (currentQuestionIndex > 0) {
-      consumeTokens(1);
-    }
-  }, [currentQuestionIndex, consumeTokens]);
+  // Remove this effect that was consuming tokens automatically
+  // The tokens should only be consumed when answering a question
 
   if (!quiz) return <div>Quiz not found</div>;
 
@@ -77,14 +73,18 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   const handleAnswer = (selectedOptionIndex: number) => {
     if (isAnswered) return;
     
-    // Check if we have enough tokens for just 1 token, not 10
+    // Check if user has enough tokens for this question
     if (!TokenService.hasEnoughTokens(currentUser, 1)) {
       setShowTokenAlert(true);
       return;
     }
 
-    // Consume just 1 token
-    consumeTokens(1);
+    // Consume token only when answering
+    if (!consumeTokens(1)) {
+      setShowTokenAlert(true);
+      return;
+    }
+    
     setIsAnswered(true);
     const isCorrect = selectedOptionIndex === currentQuestion.correctOptionIndex;
     

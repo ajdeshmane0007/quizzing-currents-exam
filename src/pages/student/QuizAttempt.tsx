@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -12,6 +13,8 @@ import ScoreBoard from '@/components/quiz/ScoreBoard';
 import AdDisplay from '@/components/quiz/AdDisplay';
 import { toast } from '@/hooks/use-toast';
 import { TokenService } from '@/services/TokenService';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface Question {
   text: string;
@@ -21,7 +24,8 @@ interface Question {
 }
 
 const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
-  const { quizzes, consumeTokens, currentUser } = useApp();
+  const { quizzes, consumeTokens, currentUser, addTokens } = useApp();
+  const navigate = useNavigate();
   const quiz = quizzes.find(q => q.id === quizId);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
@@ -34,6 +38,7 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   const [showScoreboard, setShowScoreboard] = useState(false);
   const [showAd, setShowAd] = useState(false);
   const [timeSpent, setTimeSpent] = useState(0);
+  const [showTokenAlert, setShowTokenAlert] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -59,6 +64,7 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   }, [currentQuestionIndex]);
 
   useEffect(() => {
+    // We'll only consume 1 token per question, not 10
     if (currentQuestionIndex > 0) {
       consumeTokens(1);
     }
@@ -71,15 +77,13 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
   const handleAnswer = (selectedOptionIndex: number) => {
     if (isAnswered) return;
     
-    if (!TokenService.consumeToken(currentUser)) {
-      toast({
-        title: "Out of tokens",
-        description: "Please purchase more tokens or end the quiz",
-        variant: "destructive"
-      });
+    // Check if we have enough tokens for just 1 token, not 10
+    if (!TokenService.hasEnoughTokens(currentUser, 1)) {
+      setShowTokenAlert(true);
       return;
     }
 
+    // Consume just 1 token
     consumeTokens(1);
     setIsAnswered(true);
     const isCorrect = selectedOptionIndex === currentQuestion.correctOptionIndex;
@@ -107,8 +111,24 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
     } else {
       setTimeout(() => {
         setCurrentQuestionIndex(prev => prev + 1);
+        setIsAnswered(false);
+        setTimeLeft(15);
       }, 2500);
     }
+  };
+
+  const handleBuyTokens = () => {
+    addTokens(10);
+    setShowTokenAlert(false);
+    toast({
+      title: "Tokens Added",
+      description: "10 tokens have been added to your account."
+    });
+  };
+
+  const handleEndQuiz = () => {
+    setShowTokenAlert(false);
+    setShowScoreboard(true);
   };
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
@@ -258,6 +278,26 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
           </div>
         </>
       )}
+
+      <Dialog open={showTokenAlert} onOpenChange={setShowTokenAlert}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">Out of Tokens</DialogTitle>
+          </DialogHeader>
+          <div className="p-4 text-center">
+            <p className="mb-4">You don't have enough tokens to continue this quiz.</p>
+            <p className="mb-6">Would you like to buy more tokens or end the quiz?</p>
+          </div>
+          <DialogFooter className="flex justify-center gap-4">
+            <Button variant="outline" onClick={handleEndQuiz}>
+              End Quiz
+            </Button>
+            <Button onClick={handleBuyTokens}>
+              Buy 10 Tokens
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

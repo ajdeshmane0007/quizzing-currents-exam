@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -62,9 +61,6 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
       setShowAd(true);
     }
   }, [currentQuestionIndex]);
-
-  // Remove this effect that was consuming tokens automatically
-  // The tokens should only be consumed when answering a question
 
   if (!quiz) return <div>Quiz not found</div>;
 
@@ -179,7 +175,7 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
             totalQuestions={quiz.questions.length}
             timeSpent={timeSpent}
           />
-          <FloatingEmoji show={true} />
+          <FloatingEmoji show={true} isCorrect={true} />
         </>
       ) : showAd ? (
         <AdDisplay onClose={() => setShowAd(false)} />
@@ -272,7 +268,8 @@ const QuizAttemptContent: React.FC<{ quizId: string }> = ({ quizId }) => {
                 show={showSymbols}
               />
               <FloatingEmoji 
-                show={isAnswered && selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
+                show={isAnswered}
+                isCorrect={selectedAnswers[currentQuestionIndex] === currentQuestion.correctOptionIndex}
               />
             </Card>
           </div>

@@ -1,12 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
-import { Award, PartyPopper, Star, Trophy } from 'lucide-react';
+import { Award, PartyPopper, Star, Trophy, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface FloatingEmojiProps {
   show: boolean;
+  isCorrect?: boolean;
 }
 
-const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
+const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true }) => {
   const [emojis, setEmojis] = useState<{ id: number; x: number; y: number; type: number; scale: number; delay: number; rotation: number }[]>([]);
   
   useEffect(() => {
@@ -15,8 +17,8 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
         id: Date.now() + i,
         x: Math.random() * 100,
         y: Math.random() * 100,
-        type: Math.floor(Math.random() * 4),
-        scale: Math.random() * 0.5 + 0.75, // Adjusted scale for 123x120px size
+        type: Math.floor(Math.random() * (isCorrect ? 4 : 1)), // Only X icon for wrong answers
+        scale: Math.random() * 0.5 + 0.75,
         delay: Math.random() * 1500,
         rotation: Math.random() * 720 - 360
       }));
@@ -28,11 +30,15 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
 
       return () => clearTimeout(timer);
     }
-  }, [show]);
+  }, [show, isCorrect]);
 
   if (!show) return null;
 
   const getEmoji = (type: number) => {
+    if (!isCorrect) {
+      return <X className="w-[123px] h-[120px] text-red-500" />;
+    }
+
     switch (type) {
       case 0:
         return <Star className="w-[123px] h-[120px] text-yellow-400" />;
@@ -46,7 +52,10 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show }) => {
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-50 bg-black/30">
+    <div className={cn(
+      "fixed inset-0 pointer-events-none overflow-hidden z-50",
+      isCorrect ? "bg-black/30" : "bg-black/40"
+    )}>
       {emojis.map((emoji) => (
         <div
           key={emoji.id}

@@ -13,8 +13,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-gray-100">
-      {/* Mobile container with max-width */}
-      <div className="w-full max-w-md bg-white shadow-lg min-h-screen flex flex-col">
+      {/* Mobile container with max-width and material design appearance */}
+      <div className="w-full max-w-md bg-white rounded-none shadow-lg min-h-screen flex flex-col border border-gray-200">
         <Navbar />
         <div className="flex-1 px-4 py-6">
           {children}

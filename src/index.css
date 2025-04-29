@@ -33,7 +33,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 260 74% 74%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
     --sidebar-background: 260 24% 54%;
     --sidebar-foreground: 210 40% 98%;
@@ -96,11 +96,11 @@
 
 @layer components {
   .quiz-card {
-    @apply bg-white shadow-lg rounded-xl border-0 transition-all;
+    @apply bg-white shadow-md rounded-lg border border-gray-100 transition-all;
   }
   
   .quiz-option {
-    @apply p-4 rounded-lg border cursor-pointer transition-all flex items-center gap-3;
+    @apply p-4 rounded-md border cursor-pointer transition-all flex items-center gap-3;
   }
   
   .quiz-option:hover {
@@ -113,5 +113,18 @@
   
   .quiz-option-incorrect {
     @apply bg-quiz-red-light border-quiz-red text-quiz-red-dark;
+  }
+  
+  /* Material design inspired classes */
+  .material-card {
+    @apply bg-white rounded-md border border-gray-200 shadow-sm hover:shadow transition-all;
+  }
+  
+  .material-button {
+    @apply rounded-md shadow-sm hover:shadow transition-all;
+  }
+  
+  .material-input {
+    @apply border-b border-gray-300 focus:border-primary focus:outline-none transition-all px-2 py-1;
   }
 }

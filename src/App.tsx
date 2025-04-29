@@ -34,40 +34,44 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AppProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+        <div className="flex justify-center min-h-screen bg-gray-100">
+          <div className="w-full max-w-md bg-white shadow-lg">
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-            {/* Student Routes */}
-            <Route element={<ProtectedRoute allowedRoles={['student']} />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/quizzes" element={<Quizzes />} />
-              <Route path="/quizzes/:id" element={<QuizAttempt />} />
-              <Route path="/current-affairs" element={<CurrentAffairs />} />
-              <Route path="/current-affairs/:id" element={<CurrentAffairDetail />} />
-              <Route path="/exams" element={<Exams />} />
-            </Route>
+                {/* Student Routes */}
+                <Route element={<ProtectedRoute allowedRoles={['student']} />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/quizzes" element={<Quizzes />} />
+                  <Route path="/quizzes/:id" element={<QuizAttempt />} />
+                  <Route path="/current-affairs" element={<CurrentAffairs />} />
+                  <Route path="/current-affairs/:id" element={<CurrentAffairDetail />} />
+                  <Route path="/exams" element={<Exams />} />
+                </Route>
 
-            {/* Admin Routes */}
-            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/current-affairs" element={<AdminCurrentAffairs />} />
-              <Route path="/admin/current-affairs/new" element={<AdminCurrentAffairForm />} />
-              <Route path="/admin/current-affairs/:id" element={<AdminCurrentAffairForm />} />
-            </Route>
+                {/* Admin Routes */}
+                <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/current-affairs" element={<AdminCurrentAffairs />} />
+                  <Route path="/admin/current-affairs/new" element={<AdminCurrentAffairForm />} />
+                  <Route path="/admin/current-affairs/:id" element={<AdminCurrentAffairForm />} />
+                </Route>
 
-            {/* Redirect root admin path to admin dashboard */}
-            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-            
-            {/* Fallback Routes */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+                {/* Redirect root admin path to admin dashboard */}
+                <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                
+                {/* Fallback Routes */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </div>
       </AppProvider>
     </TooltipProvider>
   </QueryClientProvider>

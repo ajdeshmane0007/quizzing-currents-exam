@@ -13,21 +13,21 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
   
   useEffect(() => {
     if (show) {
-      // Create more emojis (50) for a fuller screen effect
-      const newEmojis = Array.from({ length: 50 }, (_, i) => ({
+      // Create emojis for a mobile-centric view (fewer but larger)
+      const newEmojis = Array.from({ length: 20 }, (_, i) => ({
         id: Date.now() + i,
-        x: Math.random() * 100, // Random position across the screen
-        y: Math.random() * 100, // Random position across the screen
+        x: Math.random() * 80 + 10, // Keep emojis more centered horizontally
+        y: Math.random() * 70 + 15, // Distribute vertically but avoid edges
         type: Math.floor(Math.random() * (isCorrect ? 4 : 1)), // Only X icon for wrong answers
-        scale: Math.random() * 0.7 + 0.6, // More varied scale for dynamic effect
-        delay: Math.random() * 2000, // More varied delay for natural effect
-        rotation: Math.random() * 720 - 360 // More rotation for dynamic movement
+        scale: Math.random() * 0.4 + 0.8, // Larger scale for mobile view
+        delay: Math.random() * 1000, // Faster animations for mobile
+        rotation: Math.random() * 360 - 180 // Less rotation for cleaner look
       }));
       setEmojis(newEmojis);
 
       const timer = setTimeout(() => {
         setEmojis([]);
-      }, 4000); // Slightly longer animation duration
+      }, 2500); // Shorter duration for mobile UX
 
       return () => clearTimeout(timer);
     }
@@ -37,18 +37,18 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
 
   const getEmoji = (type: number) => {
     if (!isCorrect) {
-      return <X className="w-[123px] h-[120px] text-red-500" />;
+      return <X className="w-[80px] h-[80px] text-red-500" />;
     }
 
     switch (type) {
       case 0:
-        return <Star className="w-[123px] h-[120px] text-yellow-400" />;
+        return <Star className="w-[80px] h-[80px] text-yellow-400" />;
       case 1:
-        return <Trophy className="w-[123px] h-[120px] text-yellow-500" />;
+        return <Trophy className="w-[80px] h-[80px] text-yellow-500" />;
       case 2:
-        return <PartyPopper className="w-[123px] h-[120px] text-purple-500" />;
+        return <PartyPopper className="w-[80px] h-[80px] text-purple-500" />;
       default:
-        return <Award className="w-[123px] h-[120px] text-blue-500" />;
+        return <Award className="w-[80px] h-[80px] text-blue-500" />;
     }
   };
 
@@ -56,8 +56,8 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
     <div className={cn(
       "fixed inset-0 pointer-events-none overflow-hidden z-50",
       isCorrect 
-        ? "bg-gradient-to-r from-black/20 via-black/30 to-black/20" 
-        : "bg-gradient-to-r from-black/30 via-black/40 to-black/30"
+        ? "bg-black/40" 
+        : "bg-black/50"
     )}>
       {emojis.map((emoji) => (
         <div
@@ -68,7 +68,7 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
             top: `${emoji.y}%`, 
             transform: `scale(${emoji.scale}) rotate(${emoji.rotation}deg)`,
             animationDelay: `${emoji.delay}ms`,
-            animationDuration: '3s'
+            animationDuration: '2s'
           }}
         >
           {getEmoji(emoji.type)}

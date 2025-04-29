@@ -49,36 +49,37 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, isUpcoming = true }) => {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="h-full">
+      <CardHeader className="py-3">
         <div className="flex justify-between items-start">
-          <CardTitle>{exam.title}</CardTitle>
-          <Badge variant={getBadgeVariant()}>{status}</Badge>
+          <CardTitle className="text-base">{exam.title}</CardTitle>
+          <Badge variant={getBadgeVariant()} className="text-xs">{status}</Badge>
         </div>
-        <CardDescription>{exam.description}</CardDescription>
+        <CardDescription className="text-xs mt-1">{exam.description}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="h-4 w-4 text-quiz-purple" />
+      <CardContent className="py-0">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-xs">
+            <Calendar className="h-3 w-3 text-quiz-purple" />
             <span>Start: {formatDate(exam.startDate)}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Calendar className="h-4 w-4 text-quiz-purple" />
+          <div className="flex items-center gap-2 text-xs">
+            <Calendar className="h-3 w-3 text-quiz-purple" />
             <span>End: {formatDate(exam.endDate)}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <Clock className="h-4 w-4 text-quiz-purple" />
+          <div className="flex items-center gap-2 text-xs">
+            <Clock className="h-3 w-3 text-quiz-purple" />
             <span>Duration: {exam.duration} minutes</span>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-white pt-2">
+      <CardFooter className="pt-2 pb-3">
         <Button 
           asChild 
-          className="w-full" 
+          className="w-full text-sm py-1 h-8"
           variant={isActive ? "default" : "outline"}
           disabled={!isUpcoming || (!isActive && new Date() < exam.startDate)}
+          size="sm"
         >
           <Link to={`/exams/${exam.id}`}>
             {isActive ? "Take Exam" : isUpcoming ? "View Details" : "View Results"}

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Quiz } from '@/types';
 import { Calendar } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -14,6 +15,8 @@ interface QuizCardProps {
 }
 
 const QuizCard: React.FC<QuizCardProps> = ({ quiz, linkTo, isCompleted }) => {
+  const isMobile = useIsMobile();
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="bg-slate-50 pb-4">
@@ -29,7 +32,9 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, linkTo, isCompleted }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-4">
-        <p className="text-sm line-clamp-3">{quiz.description}</p>
+        {!isMobile && (
+          <p className="text-sm line-clamp-3">{quiz.description}</p>
+        )}
         <div className="mt-4 text-xs text-muted-foreground">
           <strong>Questions:</strong> {quiz.questions.length}
         </div>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, PieChart } from "lucide-react";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface StatCardProps {
   title: string;
@@ -10,14 +11,16 @@ interface StatCardProps {
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <CardTitle className="text-xs sm:text-sm font-medium">{title}</CardTitle>
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-xl sm:text-2xl font-bold">{value}</div>
       </CardContent>
     </Card>
   );
@@ -36,9 +39,11 @@ interface DashboardStatsProps {
 }
 
 const DashboardStats: React.FC<DashboardStatsProps> = ({ stats, userType }) => {
+  const isMobile = useIsMobile();
+  
   if (userType === 'admin') {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
         <StatCard
           title="Total Quizzes"
           value={stats.quizzes || 0}
@@ -64,7 +69,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats, userType }) => {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
       <StatCard
         title="Available Quizzes"
         value={stats.quizzes || 0}

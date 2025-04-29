@@ -7,9 +7,11 @@ import DashboardStats from '@/components/common/DashboardStats';
 import QuizCard from '@/components/common/QuizCard';
 import ExamCard from '@/components/common/ExamCard';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard: React.FC = () => {
   const { currentUser, quizzes, exams, currentAffairs, results } = useApp();
+  const isMobile = useIsMobile();
 
   // Calculate stats for dashboard
   const stats = useMemo(() => {
@@ -40,17 +42,17 @@ const Dashboard: React.FC = () => {
     <MainLayout>
       <PageHeader
         title={`Welcome, ${currentUser?.name}`}
-        description="Track your progress and stay updated with quizzes and exams."
+        description={!isMobile ? "Track your progress and stay updated with quizzes and exams." : ""}
       />
       
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Stats */}
         <DashboardStats stats={stats} userType="student" />
         
         {/* Recent Quizzes */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Latest Quizzes</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <h2 className="text-lg font-semibold mb-3">Latest Quizzes</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
             {recentQuizzes.map((quiz) => (
               <QuizCard 
                 key={quiz.id} 
@@ -63,8 +65,8 @@ const Dashboard: React.FC = () => {
         
         {/* Upcoming Exams */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Upcoming Exams</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <h2 className="text-lg font-semibold mb-3">Upcoming Exams</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
             {upcomingExams.map((exam) => (
               <ExamCard key={exam.id} exam={exam} />
             ))}
@@ -73,8 +75,8 @@ const Dashboard: React.FC = () => {
         
         {/* Recent Current Affairs */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Latest Current Affairs</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <h2 className="text-lg font-semibold mb-3">Latest Current Affairs</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
             {recentCurrentAffairs.map((article) => (
               <CurrentAffairCard key={article.id} article={article} />
             ))}

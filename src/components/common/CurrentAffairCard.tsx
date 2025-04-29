@@ -6,12 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CurrentAffair } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ArrowRight } from 'lucide-react';
 
 interface CurrentAffairCardProps {
   article: CurrentAffair;
+  onNext?: () => void;
 }
 
-const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article }) => {
+const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext }) => {
   const isMobile = useIsMobile();
   
   // Format date
@@ -51,10 +53,21 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article }) => {
           ))}
         </div>
       </CardContent>
-      <CardFooter className="bg-white pt-2">
+      <CardFooter className="bg-white pt-2 flex flex-col gap-2">
         <Button asChild className="w-full" variant="outline">
           <Link to={`/current-affairs/${article.id}`}>Read More</Link>
         </Button>
+        {onNext && (
+          <Button 
+            onClick={onNext} 
+            className="w-full flex justify-between items-center" 
+            variant="ghost"
+            size="sm"
+          >
+            <span>Next Article</span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

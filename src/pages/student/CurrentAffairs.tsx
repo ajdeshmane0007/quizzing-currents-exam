@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import PageHeader from '@/components/common/PageHeader';
@@ -8,12 +8,21 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FileSearch } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import { type CarouselApi } from '@/components/ui/carousel';
 
 const CurrentAffairs: React.FC = () => {
   const { currentAffairs } = useApp();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string | null>(null);
   const isMobile = useIsMobile();
+  const [api, setApi] = useState<CarouselApi>();
   
   // Extract unique categories
   const categories = Array.from(
@@ -36,6 +45,12 @@ const CurrentAffairs: React.FC = () => {
   const sortedArticles = [...filteredArticles].sort(
     (a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()
   );
+
+  const handleNext = () => {
+    if (api) {
+      api.scrollNext();
+    }
+  };
 
   return (
     <MainLayout>
@@ -73,10 +88,23 @@ const CurrentAffairs: React.FC = () => {
       {sortedArticles.length === 0 ? (
         <p className="text-center py-8 text-muted-foreground">No current affairs found.</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {sortedArticles.map((article) => (
-            <CurrentAffairCard key={article.id} article={article} />
-          ))}
+        <div className="relative">
+          <Carousel setApi={setApi} opts={{ align: "start" }}>
+            <CarouselContent className="h-full">
+              {sortedArticles.map((article, index) => (
+                <CarouselItem key={article.id} className="md:basis-1/2">
+                  <CurrentAffairCard 
+                    article={article} 
+                    onNext={index < sortedArticles.length - 1 ? handleNext : undefined} 
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <div className="hidden sm:block">
+              <CarouselPrevious className="-left-3 top-1/2" />
+              <CarouselNext className="-right-3 top-1/2" />
+            </div>
+          </Carousel>
         </div>
       )}
     </MainLayout>

@@ -1,11 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import LockContent from '@/components/common/LockContent';
 import TokenDisplay from '@/components/common/TokenDisplay';
 
@@ -14,7 +14,13 @@ const CurrentAffairDetail: React.FC = () => {
   const { currentAffairs } = useApp();
   const navigate = useNavigate();
   
-  const article = currentAffairs.find((a) => a.id === id);
+  // Find current article and its index
+  const currentIndex = currentAffairs.findIndex(a => a.id === id);
+  const article = currentAffairs[currentIndex];
+
+  // Determine next and previous articles
+  const nextArticle = currentIndex < currentAffairs.length - 1 ? currentAffairs[currentIndex + 1] : null;
+  const prevArticle = currentIndex > 0 ? currentAffairs[currentIndex - 1] : null;
   
   if (!article) {
     return (
@@ -36,6 +42,11 @@ const CurrentAffairDetail: React.FC = () => {
     month: 'long',
     day: 'numeric'
   }).format(article.publishedDate);
+
+  // Navigate to next or previous article
+  const goToArticle = (articleId: string) => {
+    navigate(`/current-affairs/${articleId}`);
+  };
 
   return (
     <MainLayout>
@@ -85,6 +96,30 @@ const CurrentAffairDetail: React.FC = () => {
                 {tag}
               </Badge>
             ))}
+          </div>
+          
+          <div className="flex justify-between mt-8">
+            {prevArticle ? (
+              <Button 
+                variant="outline" 
+                onClick={() => goToArticle(prevArticle.id)}
+                className="flex items-center"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Previous
+              </Button>
+            ) : <div></div>}
+            
+            {nextArticle && (
+              <Button 
+                variant="outline" 
+                onClick={() => goToArticle(nextArticle.id)}
+                className="flex items-center ml-auto"
+              >
+                Next
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
           </div>
         </LockContent>
       </article>

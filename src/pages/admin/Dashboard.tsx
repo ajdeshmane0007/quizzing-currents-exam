@@ -8,7 +8,7 @@ import DashboardStats from '@/components/common/DashboardStats';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PieChart, BarChart, FileText } from 'lucide-react';
+import { BookOpen, Calendar, Activity, Users } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard: React.FC = () => {
@@ -23,13 +23,30 @@ const AdminDashboard: React.FC = () => {
     // Count upcoming exams (current date is before end date)
     const upcomingExams = exams.filter(exam => new Date() <= exam.endDate).length;
     
+    // Count premium vs free content
+    const premiumContent = quizzes.filter(quiz => quiz.isPremium).length + 
+                          currentAffairs.filter(article => article.isPremium).length;
+    const freeContent = quizzes.filter(quiz => !quiz.isPremium).length + 
+                        currentAffairs.filter(article => !article.isPremium).length;
+    
+    // Calculate active users (this would normally come from real analytics)
+    const activeUsers = Math.round(studentCount * 0.65);
+    
+    // Calculate completion rate
+    const completionRate = results.length > 0 ? 
+      Math.round((results.length / (quizzes.length * studentCount)) * 100) : 0;
+    
     return {
       quizzes: quizzes.length,
       students: studentCount,
       currentAffairs: currentAffairs.length,
       upcomingExams,
+      premiumContent,
+      freeContent,
+      activeUsers,
+      completionRate,
     };
-  }, [quizzes, exams, currentAffairs, mockUsers]);
+  }, [quizzes, exams, currentAffairs, mockUsers, results]);
 
   // Get recent activity (quiz results)
   const recentResults = [...results].sort((a, b) => 
@@ -61,7 +78,7 @@ const AdminDashboard: React.FC = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <FileText className="h-5 w-5 text-quiz-purple" />
+                <Activity className="h-5 w-5 text-quiz-purple" />
                 Recent Quiz Submissions
               </CardTitle>
               {!isMobile && <CardDescription>Latest quiz results from students</CardDescription>}
@@ -108,7 +125,7 @@ const AdminDashboard: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                  <PieChart className="h-5 w-5 text-quiz-purple" />
+                  <Users className="h-5 w-5 text-quiz-purple" />
                   Quick Actions
                 </CardTitle>
               </CardHeader>
@@ -134,7 +151,7 @@ const AdminDashboard: React.FC = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                  <BarChart className="h-5 w-5 text-quiz-purple" />
+                  <Calendar className="h-5 w-5 text-quiz-purple" />
                   Upcoming Exams
                 </CardTitle>
               </CardHeader>

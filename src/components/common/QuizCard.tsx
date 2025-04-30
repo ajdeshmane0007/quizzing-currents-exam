@@ -22,11 +22,18 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, linkTo, isCompleted }) => {
       <CardHeader className="bg-slate-50 py-2.5">
         <div className="flex justify-between items-start">
           <CardTitle className="text-sm">{quiz.title}</CardTitle>
-          {isCompleted && (
-            <Badge variant="secondary" className="text-xs">
-              Completed
-            </Badge>
-          )}
+          <div className="flex gap-1">
+            {quiz.isPremium && (
+              <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
+                Premium
+              </Badge>
+            )}
+            {isCompleted && (
+              <Badge variant="secondary" className="text-xs">
+                Completed
+              </Badge>
+            )}
+          </div>
         </div>
         <CardDescription className="flex items-center gap-1 mt-1 text-xs">
           <Calendar className="h-3 w-3" />

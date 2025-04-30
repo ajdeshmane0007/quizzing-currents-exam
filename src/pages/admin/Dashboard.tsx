@@ -1,5 +1,6 @@
 
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import PageHeader from '@/components/common/PageHeader';
@@ -8,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { PieChart, BarChart, FileText } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard: React.FC = () => {

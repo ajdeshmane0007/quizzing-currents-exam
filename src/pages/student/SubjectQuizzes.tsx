@@ -1,24 +1,40 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import PageHeader from '@/components/common/PageHeader';
 import QuizCard from '@/components/common/QuizCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, ChevronRight } from 'lucide-react';
+import { Search } from 'lucide-react';
 
-const Quizzes: React.FC = () => {
+// Map subjects to quiz categories (for demo purposes)
+const subjectCategoryMap: Record<string, string> = {
+  'subject-1': 'Mathematics',
+  'subject-2': 'Science',
+  'subject-3': 'English',
+  'subject-4': 'Social Studies',
+  'subject-5': 'Mathematics',
+  'subject-6': 'Science',
+  'subject-7': 'English',
+  'subject-8': 'Social Studies',
+  'subject-9': 'Hindi',
+};
+
+const SubjectQuizzes: React.FC = () => {
+  const { subjectId } = useParams<{ subjectId: string }>();
   const { quizzes, results, currentUser } = useApp();
   const [search, setSearch] = useState('');
   
-  // Filter quizzes based on search term
-  const filteredQuizzes = quizzes.filter(quiz => 
-    quiz.title.toLowerCase().includes(search.toLowerCase()) || 
-    quiz.description.toLowerCase().includes(search.toLowerCase()) ||
-    quiz.category.toLowerCase().includes(search.toLowerCase())
+  // Get the category name for the subject
+  const categoryName = subjectId ? subjectCategoryMap[subjectId] : '';
+  
+  // Filter quizzes based on subject and search term
+  const subjectQuizzes = quizzes.filter(quiz => 
+    quiz.category === categoryName && 
+    (search === '' || quiz.title.toLowerCase().includes(search.toLowerCase()) || 
+     quiz.description.toLowerCase().includes(search.toLowerCase()))
   );
   
   // Get completed quizzes
@@ -26,36 +42,25 @@ const Quizzes: React.FC = () => {
     .filter(result => result.userId === currentUser?.id)
     .map(result => result.quizId);
   
-  const completedQuizzes = filteredQuizzes.filter(quiz => 
+  const completedQuizzes = subjectQuizzes.filter(quiz => 
     completedQuizIds.includes(quiz.id)
   );
   
-  const availableQuizzes = filteredQuizzes.filter(quiz => 
+  const availableQuizzes = subjectQuizzes.filter(quiz => 
     !completedQuizIds.includes(quiz.id)
   );
 
   return (
     <MainLayout>
       <PageHeader
-        title="All Quizzes"
+        title={`${categoryName} Quizzes`}
         description="Practice and test your knowledge with our collection of quizzes."
       />
-
-      {/* New Class Selection CTA */}
-      <div className="bg-gradient-to-r from-quiz-purple/80 to-quiz-purple rounded-lg p-4 text-white mb-6">
-        <h3 className="font-bold text-lg mb-2">Browse by Class & Subject</h3>
-        <p className="mb-3 text-sm">Find quizzes organized by class and subject for better learning</p>
-        <Button asChild variant="secondary" size="sm">
-          <Link to="/classes" className="flex items-center">
-            Browse Classes <ChevronRight className="h-4 w-4 ml-1" />
-          </Link>
-        </Button>
-      </div>
 
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search quizzes by title, description or category"
+          placeholder="Search quizzes by title or description"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10"
@@ -64,16 +69,16 @@ const Quizzes: React.FC = () => {
       
       <Tabs defaultValue="all">
         <TabsList>
-          <TabsTrigger value="all">All Quizzes ({filteredQuizzes.length})</TabsTrigger>
+          <TabsTrigger value="all">All Quizzes ({subjectQuizzes.length})</TabsTrigger>
           <TabsTrigger value="available">Available ({availableQuizzes.length})</TabsTrigger>
           <TabsTrigger value="completed">Completed ({completedQuizzes.length})</TabsTrigger>
         </TabsList>
         <TabsContent value="all" className="pt-6">
-          {filteredQuizzes.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">No quizzes found.</p>
+          {subjectQuizzes.length === 0 ? (
+            <p className="text-center py-8 text-muted-foreground">No quizzes found for this subject.</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {filteredQuizzes.map((quiz) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {subjectQuizzes.map((quiz) => (
                 <QuizCard 
                   key={quiz.id} 
                   quiz={quiz} 
@@ -88,7 +93,7 @@ const Quizzes: React.FC = () => {
           {availableQuizzes.length === 0 ? (
             <p className="text-center py-8 text-muted-foreground">No available quizzes found.</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {availableQuizzes.map((quiz) => (
                 <QuizCard 
                   key={quiz.id} 
@@ -103,7 +108,7 @@ const Quizzes: React.FC = () => {
           {completedQuizzes.length === 0 ? (
             <p className="text-center py-8 text-muted-foreground">No completed quizzes yet.</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {completedQuizzes.map((quiz) => (
                 <QuizCard 
                   key={quiz.id} 
@@ -120,4 +125,4 @@ const Quizzes: React.FC = () => {
   );
 };
 
-export default Quizzes;
+export default SubjectQuizzes;

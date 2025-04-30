@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,9 @@ import Register from "./pages/auth/Register";
 
 // Student Pages
 import Dashboard from "./pages/student/Dashboard";
+import ClassList from "./pages/student/ClassList";
+import SubjectList from "./pages/student/SubjectList";
+import SubjectQuizzes from "./pages/student/SubjectQuizzes";
 import Quizzes from "./pages/student/Quizzes";
 import QuizAttempt from "./pages/student/QuizAttempt";
 import CurrentAffairs from "./pages/student/CurrentAffairs";
@@ -44,6 +46,13 @@ const App = () => (
             {/* Student Routes */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              
+              {/* New Quiz Flow */}
+              <Route path="/classes" element={<ClassList />} />
+              <Route path="/subjects/:classId" element={<SubjectList />} />
+              <Route path="/quizzes/subject/:subjectId" element={<SubjectQuizzes />} />
+              
+              {/* Original Quiz Routes */}
               <Route path="/quizzes" element={<Quizzes />} />
               <Route path="/quizzes/:id" element={<QuizAttempt />} />
               <Route path="/current-affairs" element={<CurrentAffairs />} />
@@ -51,14 +60,20 @@ const App = () => (
               <Route path="/exams" element={<Exams />} />
             </Route>
 
-            {/* Admin Routes - Fixed to use AdminDashboard as placeholder for now */}
+            {/* Admin Routes - Adding the missing pages */}
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              
+              {/* Current Affairs Routes */}
               <Route path="/admin/current-affairs" element={<AdminCurrentAffairs />} />
               <Route path="/admin/current-affairs/new" element={<AdminCurrentAffairForm />} />
               <Route path="/admin/current-affairs/:id" element={<AdminCurrentAffairForm />} />
+              
+              {/* Other Admin Routes */}
               <Route path="/admin/quizzes" element={<AdminDashboard />} />
+              <Route path="/admin/quizzes/new" element={<AdminDashboard />} />
               <Route path="/admin/exams" element={<AdminDashboard />} />
+              <Route path="/admin/exams/new" element={<AdminDashboard />} />
               <Route path="/admin/students" element={<AdminDashboard />} />
               <Route path="/admin/profile" element={<AdminDashboard />} />
             </Route>

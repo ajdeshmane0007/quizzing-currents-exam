@@ -6,14 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CurrentAffair } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Shield } from 'lucide-react';
 
 interface CurrentAffairCardProps {
   article: CurrentAffair;
   onNext?: () => void;
+  isPremium?: boolean;
 }
 
-const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext }) => {
+const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, isPremium = false }) => {
   const isMobile = useIsMobile();
   
   // Format date
@@ -32,12 +33,26 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext }
             alt={article.title}
             className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
           />
+          {isPremium && (
+            <div className="absolute top-2 right-2">
+              <Badge variant="secondary" className="bg-amber-400 text-black">
+                <Shield className="h-3 w-3 mr-1" /> Premium
+              </Badge>
+            </div>
+          )}
         </div>
       )}
       <CardHeader>
         <div className="flex justify-between items-start">
           <CardTitle className="line-clamp-2">{article.title}</CardTitle>
-          <Badge>{article.category}</Badge>
+          <div className="flex flex-col gap-1">
+            <Badge>{article.category}</Badge>
+            {isPremium && !article.imageUrl && (
+              <Badge variant="secondary" className="bg-amber-400 text-black">
+                <Shield className="h-3 w-3 mr-1" /> Premium
+              </Badge>
+            )}
+          </div>
         </div>
         <CardDescription>{formattedDate}</CardDescription>
       </CardHeader>

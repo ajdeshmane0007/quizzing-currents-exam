@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -50,7 +51,7 @@ const App = () => (
               <Route path="/exams" element={<Exams />} />
             </Route>
 
-            {/* Admin Routes */}
+            {/* Admin Routes - Fixed to use AdminDashboard as placeholder for now */}
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/current-affairs" element={<AdminCurrentAffairs />} />

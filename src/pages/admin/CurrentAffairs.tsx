@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link } from 'react-router-dom';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Shield } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Badge } from '@/components/ui/badge';
 
 const AdminCurrentAffairs: React.FC = () => {
   const { currentAffairs, deleteCurrentAffair } = useApp();
@@ -24,6 +25,9 @@ const AdminCurrentAffairs: React.FC = () => {
       });
     }
   };
+
+  // For this example, we'll mark every other current affair as premium
+  const isPremium = (index: number) => index % 2 === 0;
 
   return (
     <MainLayout>
@@ -54,15 +58,25 @@ const AdminCurrentAffairs: React.FC = () => {
                     <TableHead>Title</TableHead>
                     {!isMobile && <TableHead>Category</TableHead>}
                     <TableHead>Date</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead className="w-[100px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {currentAffairs.map((affair) => (
+                  {currentAffairs.map((affair, index) => (
                     <TableRow key={affair.id}>
                       <TableCell className="font-medium">{affair.title}</TableCell>
                       {!isMobile && <TableCell>{affair.category}</TableCell>}
                       <TableCell>{new Date(affair.publishedDate).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        {isPremium(index) ? (
+                          <Badge variant="secondary" className="bg-amber-400 text-black">
+                            <Shield className="h-3 w-3 mr-1" /> Premium
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline">Free</Badge>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button variant="outline" size="icon" asChild>

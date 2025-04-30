@@ -22,6 +22,7 @@ import { toast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Switch } from '@/components/ui/switch';
 
 // Define the form validation schema
 const formSchema = z.object({
@@ -30,6 +31,7 @@ const formSchema = z.object({
   category: z.string().min(2, "Category is required"),
   tags: z.string(),
   imageUrl: z.string().optional(),
+  isPremium: z.boolean().default(false),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -45,6 +47,10 @@ const CurrentAffairForm: React.FC = () => {
     ? currentAffairs.find(affair => affair.id === id)
     : undefined;
 
+  // For demo purposes, we'll consider every other affair as premium
+  const isPremiumByDefault = existingAffair ? 
+    currentAffairs.findIndex(affair => affair.id === id) % 2 === 0 : false;
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,6 +59,7 @@ const CurrentAffairForm: React.FC = () => {
       category: existingAffair?.category || '',
       tags: existingAffair?.tags.join(', ') || '',
       imageUrl: existingAffair?.imageUrl || '',
+      isPremium: isPremiumByDefault,
     },
   });
 
@@ -207,6 +214,27 @@ const CurrentAffairForm: React.FC = () => {
                       URL to an image that represents this current affair
                     </FormDescription>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="isPremium"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Premium Content</FormLabel>
+                      <FormDescription>
+                        Mark this current affair as premium content
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />

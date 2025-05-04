@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Quiz } from '@/types';
 import { Calendar, Lock, Clock, ChevronRight } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -15,10 +14,8 @@ interface QuizCardProps {
 }
 
 const QuizCard: React.FC<QuizCardProps> = ({ quiz, linkTo, isCompleted }) => {
-  const isMobile = useIsMobile();
-
   return (
-    <Card className="overflow-hidden h-full hover:shadow-md transition-all border-t-4 border-t-quiz-purple">
+    <Card className="overflow-hidden h-full hover:shadow-md transition-all border-t-4 border-t-indigo-500">
       <CardHeader className="bg-white py-3">
         <div className="flex justify-between items-start">
           <CardTitle className="text-sm">{quiz.title}</CardTitle>
@@ -51,7 +48,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ quiz, linkTo, isCompleted }) => {
       <CardFooter className="bg-white pt-2 pb-3">
         <Button 
           asChild 
-          className="w-full text-xs py-1 h-8" 
+          className="w-full text-xs py-1 h-8 bg-indigo-600 hover:bg-indigo-700" 
           size="sm"
           variant={isCompleted ? "outline" : "default"}
         >

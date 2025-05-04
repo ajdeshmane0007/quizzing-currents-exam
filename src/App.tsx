@@ -25,6 +25,8 @@ import Exams from "./pages/student/Exams";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminCurrentAffairs from "./pages/admin/CurrentAffairs";
 import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
+import ClassManagement from "./pages/admin/ClassManagement";
+import SubjectManagement from "./pages/admin/SubjectManagement";
 
 // Other Pages
 import NotFound from "./pages/NotFound";
@@ -60,9 +62,13 @@ const App = () => (
               <Route path="/exams" element={<Exams />} />
             </Route>
 
-            {/* Admin Routes - Adding the missing pages */}
+            {/* Admin Routes */}
             <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              
+              {/* Class & Subject Management */}
+              <Route path="/admin/classes" element={<ClassManagement />} />
+              <Route path="/admin/subjects" element={<SubjectManagement />} />
               
               {/* Current Affairs Routes */}
               <Route path="/admin/current-affairs" element={<AdminCurrentAffairs />} />

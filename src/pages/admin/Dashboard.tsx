@@ -8,7 +8,7 @@ import DashboardStats from '@/components/common/DashboardStats';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookOpen, Calendar, Activity, Users } from 'lucide-react';
+import { BookOpen, Calendar, Activity, Users, BookOpenCheck, BookmarkPlus, GraduationCap } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard: React.FC = () => {
@@ -60,7 +60,7 @@ const AdminDashboard: React.FC = () => {
         description={!isMobile ? "Manage your quizzes, exams, and monitor student performance." : ""}
       >
         <div className="flex gap-2">
-          <Button asChild size={isMobile ? "sm" : "default"}>
+          <Button asChild size={isMobile ? "sm" : "default"} className="bg-indigo-600 hover:bg-indigo-700">
             <Link to="/admin/quizzes/new">Create Quiz</Link>
           </Button>
           <Button asChild variant="outline" size={isMobile ? "sm" : "default"}>
@@ -73,112 +73,114 @@ const AdminDashboard: React.FC = () => {
         {/* Stats */}
         <DashboardStats stats={stats} userType="admin" />
         
-        {/* Recent Results */}
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                <Activity className="h-5 w-5 text-quiz-purple" />
-                Recent Quiz Submissions
+        {/* Main Admin Features */}
+        <div className="grid grid-cols-2 gap-3">
+          <Card className="hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <GraduationCap className="h-4 w-4 text-indigo-600" />
+                Classes
               </CardTitle>
-              {!isMobile && <CardDescription>Latest quiz results from students</CardDescription>}
             </CardHeader>
-            <CardContent className="overflow-x-auto">
-              {recentResults.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">No recent submissions</p>
-              ) : (
-                <div className="w-full overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Student</TableHead>
-                        <TableHead>Quiz</TableHead>
-                        <TableHead>Score</TableHead>
-                        <TableHead>Date</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {recentResults.map((result) => {
-                        const quiz = quizzes.find(q => q.id === result.quizId);
-                        const student = mockUsers.find(u => u.id === result.userId);
-                        
-                        return (
-                          <TableRow key={`${result.userId}-${result.quizId}`}>
-                            <TableCell>{student?.name || 'Unknown'}</TableCell>
-                            <TableCell>{quiz?.title || 'Unknown'}</TableCell>
-                            <TableCell>
-                              {result.score}/{result.totalQuestions}
-                            </TableCell>
-                            <TableCell>{result.completedAt.toLocaleDateString()}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+            <CardContent className="pt-0 pb-3">
+              <p className="text-xs text-muted-foreground mb-2">Manage class structure</p>
+              <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
+                <Link to="/admin/classes">Manage Classes</Link>
+              </Button>
             </CardContent>
           </Card>
           
-          <div className="grid gap-4">
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                  <Users className="h-5 w-5 text-quiz-purple" />
-                  Quick Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link to="/admin/current-affairs/new">
-                    <Button variant="outline" className="w-full text-xs sm:text-sm">Add Current Affairs</Button>
-                  </Link>
-                  <Link to="/admin/quizzes/new">
-                    <Button variant="outline" className="w-full text-xs sm:text-sm">Create Quiz</Button>
-                  </Link>
-                  <Link to="/admin/students">
-                    <Button variant="outline" className="w-full text-xs sm:text-sm">Manage Students</Button>
-                  </Link>
-                  <Link to="/admin/exams/new">
-                    <Button variant="outline" className="w-full text-xs sm:text-sm">Schedule Exam</Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Upcoming Exams */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                  <Calendar className="h-5 w-5 text-quiz-purple" />
-                  Upcoming Exams
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {exams.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">No upcoming exams</p>
-                ) : (
-                  <div className="space-y-3">
-                    {exams.slice(0, 3).map((exam) => (
-                      <div key={exam.id} className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">{exam.title}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(exam.startDate).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <Link to={`/admin/exams/${exam.id}`}>
-                          <Button variant="ghost" size="sm">View</Button>
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <BookOpenCheck className="h-4 w-4 text-indigo-600" />
+                Subjects
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 pb-3">
+              <p className="text-xs text-muted-foreground mb-2">Manage subjects by class</p>
+              <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
+                <Link to="/admin/subjects">Manage Subjects</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <BookmarkPlus className="h-4 w-4 text-indigo-600" />
+                Quizzes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 pb-3">
+              <p className="text-xs text-muted-foreground mb-2">Create and edit quizzes</p>
+              <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
+                <Link to="/admin/quizzes">Manage Quizzes</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-indigo-600" />
+                Current Affairs
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 pb-3">
+              <p className="text-xs text-muted-foreground mb-2">Add news articles</p>
+              <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
+                <Link to="/admin/current-affairs">Manage News</Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
+        
+        {/* Recent Results */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Activity className="h-5 w-5 text-indigo-600" />
+              Recent Quiz Submissions
+            </CardTitle>
+            {!isMobile && <CardDescription>Latest quiz results from students</CardDescription>}
+          </CardHeader>
+          <CardContent className="overflow-x-auto">
+            {recentResults.length === 0 ? (
+              <p className="text-muted-foreground text-center py-4">No recent submissions</p>
+            ) : (
+              <div className="w-full overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Student</TableHead>
+                      <TableHead>Quiz</TableHead>
+                      <TableHead>Score</TableHead>
+                      <TableHead>Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentResults.map((result) => {
+                      const quiz = quizzes.find(q => q.id === result.quizId);
+                      const student = mockUsers.find(u => u.id === result.userId);
+                      
+                      return (
+                        <TableRow key={`${result.userId}-${result.quizId}`}>
+                          <TableCell>{student?.name || 'Unknown'}</TableCell>
+                          <TableCell>{quiz?.title || 'Unknown'}</TableCell>
+                          <TableCell>
+                            {result.score}/{result.totalQuestions}
+                          </TableCell>
+                          <TableCell>{result.completedAt.toLocaleDateString()}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </MainLayout>
   );

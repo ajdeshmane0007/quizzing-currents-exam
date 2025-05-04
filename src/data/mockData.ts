@@ -115,6 +115,7 @@ export const mockQuizzes: Quiz[] = [
     timeLimit: 10,
     createdAt: new Date('2023-01-15'),
     category: 'Geography',
+    isPremium: false,
   },
   {
     id: '2',
@@ -195,6 +196,7 @@ export const mockQuizzes: Quiz[] = [
     timeLimit: 15,
     createdAt: new Date('2025-03-01'),
     category: 'Current Affairs',
+    isPremium: true,
   },
   {
     id: '3',
@@ -275,6 +277,7 @@ export const mockQuizzes: Quiz[] = [
     timeLimit: 20,
     createdAt: new Date('2025-02-10'),
     category: 'Science',
+    isPremium: true,
   }
 ];
 
@@ -288,6 +291,7 @@ export const mockCurrentAffairs: CurrentAffair[] = [
     publishedDate: new Date('2025-03-15'),
     tags: ['Renewable Energy', 'Solar Power', 'Technology'],
     imageUrl: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    isPremium: true,
   },
   {
     id: '2',
@@ -297,6 +301,7 @@ export const mockCurrentAffairs: CurrentAffair[] = [
     publishedDate: new Date('2025-03-10'),
     tags: ['Economics', 'Global Finance', 'Regulations'],
     imageUrl: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    isPremium: false,
   },
   {
     id: '3',
@@ -306,6 +311,7 @@ export const mockCurrentAffairs: CurrentAffair[] = [
     publishedDate: new Date('2025-03-05'),
     tags: ['Climate Change', 'Global Cooperation', 'Environment'],
     imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+    isPremium: false,
   },
 ];
 

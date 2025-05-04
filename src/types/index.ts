@@ -1,3 +1,4 @@
+
 export type UserRole = 'admin' | 'student';
 
 export interface User {
@@ -26,6 +27,7 @@ export interface Quiz {
   timeLimit: number; // in minutes
   createdAt: Date;
   category: string;
+  isPremium?: boolean; // Added isPremium property
 }
 
 export interface CurrentAffair {
@@ -36,6 +38,7 @@ export interface CurrentAffair {
   publishedDate: Date;
   tags: string[];
   imageUrl?: string;
+  isPremium?: boolean; // Added isPremium property
 }
 
 export interface Exam {

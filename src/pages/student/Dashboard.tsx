@@ -10,11 +10,18 @@ import ExamCard from '@/components/common/ExamCard';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, BookOpen, Target, Award, Rocket } from 'lucide-react';
+import Onboarding from '@/components/student/Onboarding';
 
 const Dashboard: React.FC = () => {
   const { currentUser, quizzes, exams, currentAffairs, results } = useApp();
   const isMobile = useIsMobile();
+
+  // Check if this is the user's first visit (in a real app, this would be stored in user preferences)
+  const isFirstVisit = useMemo(() => {
+    // Mock implementation - in a real app, this would check if the user has completed onboarding
+    return localStorage.getItem('onboardingCompleted') !== 'true';
+  }, []);
 
   // Calculate stats for dashboard
   const stats = useMemo(() => {
@@ -41,6 +48,10 @@ const Dashboard: React.FC = () => {
   const upcomingExams = exams.filter(exam => new Date() <= exam.endDate).slice(0, 3);
   const recentCurrentAffairs = [...currentAffairs].sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()).slice(0, 3);
 
+  if (isFirstVisit) {
+    return <Onboarding />;
+  }
+
   return (
     <MainLayout>
       <PageHeader
@@ -48,32 +59,56 @@ const Dashboard: React.FC = () => {
         description={!isMobile ? "Track your progress and stay updated with quizzes and exams." : ""}
       />
       
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Stats */}
         <DashboardStats stats={stats} userType="student" />
         
-        {/* New Class Selection CTA */}
-        <div className="bg-gradient-to-r from-quiz-purple/80 to-quiz-purple rounded-lg p-4 text-white mb-6">
-          <h3 className="font-bold text-lg mb-2">Browse by Class & Subject</h3>
-          <p className="mb-3 text-sm">Find quizzes organized by class and subject for better learning</p>
-          <Button asChild variant="secondary" size="sm">
-            <Link to="/classes" className="flex items-center">
-              Browse Classes <ChevronRight className="h-4 w-4 ml-1" />
+        {/* Learning Paths Section */}
+        <div className="bg-gradient-to-r from-quiz-purple-light to-quiz-purple/20 rounded-lg p-6 mb-6">
+          <h3 className="font-bold text-xl mb-2 text-quiz-purple-dark flex items-center">
+            <Target className="mr-2 h-5 w-5" />
+            Learning Paths
+          </h3>
+          <p className="mb-4 text-sm">Structured learning paths by class and subject for better preparation</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <Link 
+              to="/classes"
+              className="flex flex-col items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all"
+            >
+              <BookOpen className="h-8 w-8 text-quiz-purple mb-2" />
+              <span className="text-sm font-medium">By Class</span>
             </Link>
-          </Button>
+            <Link 
+              to="/quizzes"
+              className="flex flex-col items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all"
+            >
+              <Award className="h-8 w-8 text-quiz-purple mb-2" />
+              <span className="text-sm font-medium">All Quizzes</span>
+            </Link>
+            <Link 
+              to="/exams" 
+              className="flex flex-col items-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all"
+            >
+              <Rocket className="h-8 w-8 text-quiz-purple mb-2" />
+              <span className="text-sm font-medium">Prep Exams</span>
+            </Link>
+          </div>
         </div>
         
         {/* Recent Quizzes */}
-        <div>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold">Latest Quizzes</h2>
+        <div className="bg-white p-5 rounded-lg shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold flex items-center">
+              <BookOpen className="h-5 w-5 mr-2 text-quiz-purple" />
+              Latest Quizzes
+            </h2>
             <Button asChild variant="ghost" size="sm">
               <Link to="/quizzes" className="flex items-center">
                 View All <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {recentQuizzes.map((quiz) => (
               <QuizCard 
                 key={quiz.id} 
@@ -85,33 +120,44 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Upcoming Exams */}
-        <div>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold">Upcoming Exams</h2>
+        <div className="bg-white p-5 rounded-lg shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold flex items-center">
+              <Award className="h-5 w-5 mr-2 text-quiz-purple" />
+              Upcoming Exams
+            </h2>
             <Button asChild variant="ghost" size="sm">
               <Link to="/exams" className="flex items-center">
                 View All <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             </Button>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             {upcomingExams.map((exam) => (
               <ExamCard key={exam.id} exam={exam} />
             ))}
+            {upcomingExams.length === 0 && (
+              <div className="col-span-3 text-center py-8 text-gray-500">
+                No upcoming exams scheduled
+              </div>
+            )}
           </div>
         </div>
         
         {/* Recent Current Affairs */}
-        <div>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold">Latest Current Affairs</h2>
+        <div className="bg-white p-5 rounded-lg shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold flex items-center">
+              <BookOpen className="h-5 w-5 mr-2 text-quiz-purple" />
+              Latest Current Affairs
+            </h2>
             <Button asChild variant="ghost" size="sm">
               <Link to="/current-affairs" className="flex items-center">
                 View All <ChevronRight className="h-4 w-4 ml-1" />
               </Link>
             </Button>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             {recentCurrentAffairs.map((article, index) => (
               <CurrentAffairCard 
                 key={article.id} 

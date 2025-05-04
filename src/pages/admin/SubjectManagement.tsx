@@ -48,12 +48,12 @@ const SubjectManagement: React.FC = () => {
   const [newSubjectName, setNewSubjectName] = useState('');
   const [selectedClassId, setSelectedClassId] = useState('');
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
-  const [filterClassId, setFilterClassId] = useState('');
+  const [filterClassId, setFilterClassId] = useState('all');
   
   // Filtered subjects based on selected class filter
-  const filteredSubjects = filterClassId 
-    ? subjects.filter(s => s.classId === filterClassId)
-    : subjects;
+  const filteredSubjects = filterClassId === 'all'
+    ? subjects
+    : subjects.filter(s => s.classId === filterClassId);
   
   const handleAddSubject = () => {
     if (!newSubjectName.trim() || !selectedClassId) {
@@ -180,7 +180,7 @@ const SubjectManagement: React.FC = () => {
                 <SelectValue placeholder="Filter by class" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Classes</SelectItem>
+                <SelectItem value="all">All Classes</SelectItem>
                 {classes.map((cls) => (
                   <SelectItem key={cls.id} value={cls.id}>
                     {cls.name}

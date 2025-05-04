@@ -20,6 +20,7 @@ import QuizAttempt from "./pages/student/QuizAttempt";
 import CurrentAffairs from "./pages/student/CurrentAffairs";
 import CurrentAffairDetail from "./pages/student/CurrentAffairDetail";
 import Exams from "./pages/student/Exams";
+import Profile from "./pages/student/Profile";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -28,6 +29,7 @@ import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
 import ClassManagement from "./pages/admin/ClassManagement";
 import SubjectManagement from "./pages/admin/SubjectManagement";
 import AdvertisementManagement from "./pages/admin/AdvertisementManagement";
+import StudentManagement from "./pages/admin/StudentManagement";
 
 // Other Pages
 import NotFound from "./pages/NotFound";
@@ -61,6 +63,9 @@ const App = () => (
               <Route path="/current-affairs" element={<CurrentAffairs />} />
               <Route path="/current-affairs/:id" element={<CurrentAffairDetail />} />
               <Route path="/exams" element={<Exams />} />
+              
+              {/* Student Profile */}
+              <Route path="/profile" element={<Profile />} />
             </Route>
 
             {/* Admin Routes */}
@@ -79,12 +84,14 @@ const App = () => (
               <Route path="/admin/current-affairs/new" element={<AdminCurrentAffairForm />} />
               <Route path="/admin/current-affairs/:id" element={<AdminCurrentAffairForm />} />
               
+              {/* Student Management */}
+              <Route path="/admin/students" element={<StudentManagement />} />
+              
               {/* Other Admin Routes */}
               <Route path="/admin/quizzes" element={<AdminDashboard />} />
               <Route path="/admin/quizzes/new" element={<AdminDashboard />} />
               <Route path="/admin/exams" element={<AdminDashboard />} />
               <Route path="/admin/exams/new" element={<AdminDashboard />} />
-              <Route path="/admin/students" element={<AdminDashboard />} />
               <Route path="/admin/profile" element={<AdminDashboard />} />
             </Route>
 

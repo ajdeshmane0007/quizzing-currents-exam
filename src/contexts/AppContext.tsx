@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User, Quiz, CurrentAffair, Exam, QuizResult } from '../types';
 import { 
@@ -63,7 +64,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       // Create a user object for the valid login
       const userData = validLogins[email as keyof typeof validLogins];
       const user: User = {
-        id: `user-${Date.now()}`,
+        id: `student-${Date.now()}`, // Generate a student ID for new users
         email: email,
         name: userData.name,
         role: userData.role as "admin" | "student",
@@ -106,6 +107,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       title: "Tokens Added",
       description: `${amount} token${amount !== 1 ? 's' : ''} have been added to your account.`
     });
+    
+    // If user is in mockUsers, update there too
+    const userIndex = mockUsers.findIndex(u => u.id === currentUser.id);
+    if (userIndex >= 0) {
+      const updatedMockUsers = [...mockUsers];
+      updatedMockUsers[userIndex] = {
+        ...updatedMockUsers[userIndex],
+        tokens: updatedMockUsers[userIndex].tokens + amount
+      };
+      // We would update the mockUsers state here in a real app
+    }
   };
   
   const consumeTokens = (amount: number): boolean => {
@@ -178,6 +190,28 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       completedAt: new Date(),
     };
     setResults([...results, newResult]);
+    
+    // Award badges logic is handled in components
+    // that display badges based on result scores
+    
+    // We would display a toast notification here for badges earned
+    const percentage = (result.score / result.totalQuestions) * 100;
+    if (percentage >= 90) {
+      toast({
+        title: "Gold Badge Earned!",
+        description: "Congratulations! You earned a Gold Badge for this quiz."
+      });
+    } else if (percentage >= 75) {
+      toast({
+        title: "Silver Badge Earned!",
+        description: "Good job! You earned a Silver Badge for this quiz."
+      });
+    } else if (percentage >= 50) {
+      toast({
+        title: "Bronze Badge Earned!",
+        description: "Nice work! You earned a Bronze Badge for this quiz."
+      });
+    }
   };
   
   return (

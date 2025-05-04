@@ -5,6 +5,7 @@ import Footer from '@/components/common/Footer';
 import BottomNav from '@/components/common/BottomNav';
 import { useApp } from '@/contexts/AppContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import TokenDisplay from '@/components/common/TokenDisplay';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -17,10 +18,18 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-indigo-50">
-      {/* Mobile optimized container */}
+      {/* Responsive container - mobile first with tablet/desktop breakpoints */}
       <div className="w-full max-w-full bg-white min-h-screen flex flex-col shadow-sm border border-gray-100">
         <Navbar />
-        <div className={`flex-1 px-4 py-3 ${isAdmin ? 'sm:px-6' : ''} ${isMobile ? 'pb-20' : ''}`}>
+        
+        {/* Show token display for students in the header area */}
+        {isAuthenticated && !isAdmin && (
+          <div className="bg-indigo-50 px-4 py-2 flex justify-end">
+            <TokenDisplay showAddButton={false} />
+          </div>
+        )}
+        
+        <div className={`flex-1 px-4 py-3 md:px-6 ${isMobile ? 'pb-20' : ''}`}>
           {children}
         </div>
         {isMobile && isAuthenticated ? <BottomNav /> : <Footer />}

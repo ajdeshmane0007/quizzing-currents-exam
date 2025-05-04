@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Award, User, Bell } from 'lucide-react';
+import { Home, BookOpen, Award, User, Bell, Book } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/contexts/AppContext';
 
@@ -23,6 +23,7 @@ const BottomNav: React.FC = () => {
         { path: '/admin/dashboard', label: 'Home', icon: Home },
         { path: '/admin/classes', label: 'Classes', icon: BookOpen },
         { path: '/admin/quizzes', label: 'Quizzes', icon: Award },
+        { path: '/admin/students', label: 'Students', icon: User },
         { path: '/admin/current-affairs', label: 'News', icon: Bell },
       ]
     : [
@@ -30,6 +31,7 @@ const BottomNav: React.FC = () => {
         { path: '/classes', label: 'Classes', icon: BookOpen },
         { path: '/quizzes', label: 'Quizzes', icon: Award },
         { path: '/current-affairs', label: 'News', icon: Bell },
+        { path: '/profile', label: 'Profile', icon: User },
       ];
   
   return (

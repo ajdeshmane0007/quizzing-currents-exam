@@ -1,6 +1,6 @@
 
-import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useMemo, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import PageHeader from '@/components/common/PageHeader';
@@ -8,12 +8,24 @@ import DashboardStats from '@/components/common/DashboardStats';
 import QuizCard from '@/components/common/QuizCard';
 import ExamCard from '@/components/common/ExamCard';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
+import Onboarding from '@/components/student/Onboarding';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, BookOpen, Target, Award, Rocket } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const Dashboard: React.FC = () => {
   const { currentUser, quizzes, exams, currentAffairs, results } = useApp();
-
+  const navigate = useNavigate();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  
+  // Check for first-time users
+  useEffect(() => {
+    const onboardingCompleted = localStorage.getItem('onboardingCompleted');
+    if (!onboardingCompleted) {
+      setShowOnboarding(true);
+    }
+  }, []);
+  
   // Calculate stats for dashboard
   const stats = useMemo(() => {
     // Filter results for current user
@@ -34,10 +46,32 @@ const Dashboard: React.FC = () => {
     };
   }, [currentUser, quizzes, exams, results]);
 
+  // Calculate earned badges
+  const badges = useMemo(() => {
+    if (!currentUser) return { bronze: 0, silver: 0, gold: 0 };
+    
+    const userResults = results.filter(result => result.userId === currentUser.id);
+    
+    // Count badges based on score percentages
+    const badgeCounts = userResults.reduce((acc, result) => {
+      const percentage = (result.score / result.totalQuestions) * 100;
+      if (percentage >= 90) acc.gold += 1;
+      else if (percentage >= 75) acc.silver += 1;
+      else if (percentage >= 50) acc.bronze += 1;
+      return acc;
+    }, { bronze: 0, silver: 0, gold: 0 });
+    
+    return badgeCounts;
+  }, [currentUser, results]);
+
   // Get most recent quizzes, exams, and current affairs
   const recentQuizzes = [...quizzes].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 4);
   const upcomingExams = exams.filter(exam => new Date() <= exam.endDate).slice(0, 2);
   const recentCurrentAffairs = [...currentAffairs].sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()).slice(0, 2);
+
+  if (showOnboarding) {
+    return <Onboarding />;
+  }
 
   return (
     <MainLayout>
@@ -49,6 +83,40 @@ const Dashboard: React.FC = () => {
       <div className="space-y-5">
         {/* Stats */}
         <DashboardStats stats={stats} userType="student" />
+        
+        {/* Badges Section */}
+        <div className="bg-gradient-to-r from-indigo-100 to-indigo-200 rounded-lg p-4 mb-4">
+          <h3 className="font-bold text-lg mb-2 text-indigo-800 flex items-center">
+            <Award className="mr-2 h-5 w-5" />
+            Your Achievements
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            {badges.bronze > 0 && (
+              <div className="flex flex-col items-center">
+                <Badge className="bg-amber-600 text-white px-3 py-1">
+                  <Award className="h-4 w-4 mr-1" /> {badges.bronze} Bronze
+                </Badge>
+              </div>
+            )}
+            {badges.silver > 0 && (
+              <div className="flex flex-col items-center">
+                <Badge className="bg-gray-400 text-white px-3 py-1">
+                  <Award className="h-4 w-4 mr-1" /> {badges.silver} Silver
+                </Badge>
+              </div>
+            )}
+            {badges.gold > 0 && (
+              <div className="flex flex-col items-center">
+                <Badge className="bg-yellow-500 text-white px-3 py-1">
+                  <Award className="h-4 w-4 mr-1" /> {badges.gold} Gold
+                </Badge>
+              </div>
+            )}
+            {badges.bronze === 0 && badges.silver === 0 && badges.gold === 0 && (
+              <p className="text-sm text-indigo-700">Complete quizzes to earn badges!</p>
+            )}
+          </div>
+        </div>
         
         {/* Learning Paths Section */}
         <div className="bg-gradient-to-r from-indigo-100 to-indigo-200 rounded-lg p-4 mb-4">

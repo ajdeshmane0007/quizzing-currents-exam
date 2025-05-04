@@ -10,13 +10,15 @@ import ExamCard from '@/components/common/ExamCard';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
 import Onboarding from '@/components/student/Onboarding';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, BookOpen, Target, Award, Rocket } from 'lucide-react';
+import { ChevronRight, BookOpen, Target, Award, Smile } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Dashboard: React.FC = () => {
   const { currentUser, quizzes, exams, currentAffairs, results } = useApp();
   const navigate = useNavigate();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const isMobile = useIsMobile();
   
   // Check for first-time users
   useEffect(() => {
@@ -65,7 +67,7 @@ const Dashboard: React.FC = () => {
   }, [currentUser, results]);
 
   // Get most recent quizzes, exams, and current affairs
-  const recentQuizzes = [...quizzes].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 4);
+  const recentQuizzes = [...quizzes].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, isMobile ? 2 : 4);
   const upcomingExams = exams.filter(exam => new Date() <= exam.endDate).slice(0, 2);
   const recentCurrentAffairs = [...currentAffairs].sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()).slice(0, 2);
 
@@ -77,10 +79,10 @@ const Dashboard: React.FC = () => {
     <MainLayout>
       <PageHeader
         title={`Welcome, ${currentUser?.name}`}
-        description="Track your progress"
+        description={!isMobile ? "Track your progress" : ""}
       />
       
-      <div className="space-y-5">
+      <div className="space-y-5 pb-16 md:pb-0">
         {/* Stats */}
         <DashboardStats stats={stats} userType="student" />
         
@@ -156,14 +158,19 @@ const Dashboard: React.FC = () => {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {recentQuizzes.slice(0, 2).map((quiz) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {recentQuizzes.map((quiz) => (
               <QuizCard 
                 key={quiz.id} 
                 quiz={quiz} 
                 linkTo={`/quizzes/${quiz.id}`} 
               />
             ))}
+            {recentQuizzes.length === 0 && (
+              <div className="col-span-2 text-center py-4 text-gray-500">
+                No quizzes available
+              </div>
+            )}
           </div>
         </div>
         
@@ -193,7 +200,7 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Recent Current Affairs */}
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-16">
+        <div className="bg-white p-4 rounded-lg shadow-sm">
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-lg font-semibold flex items-center">
               <BookOpen className="h-5 w-5 mr-2 text-indigo-600" />
@@ -213,6 +220,11 @@ const Dashboard: React.FC = () => {
                 onNext={index < recentCurrentAffairs.length - 1 ? () => {} : undefined}
               />
             ))}
+            {recentCurrentAffairs.length === 0 && (
+              <div className="text-center py-4 text-gray-500">
+                No current affairs available
+              </div>
+            )}
           </div>
         </div>
       </div>

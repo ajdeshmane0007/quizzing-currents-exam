@@ -7,10 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import TokenDisplay from '@/components/common/TokenDisplay';
-import { Award, User, Mail, BookOpen } from 'lucide-react';
+import { Award, User, Mail, BookOpen, Smile } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Profile: React.FC = () => {
   const { currentUser, results } = useApp();
+  const isMobile = useIsMobile();
   
   // Calculate badges
   const userResults = results.filter(result => result.userId === currentUser?.id);
@@ -32,15 +34,15 @@ const Profile: React.FC = () => {
 
   return (
     <MainLayout>
-      <PageHeader title="My Profile" description="View and manage your account" />
+      <PageHeader title="My Profile" description={!isMobile ? "View and manage your account" : ""} />
       
-      <div className="space-y-6">
+      <div className="space-y-6 pb-16 md:pb-0">
         {/* Profile Card */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center justify-between">
               <span>Personal Information</span>
-              <TokenDisplay />
+              <TokenDisplay showAddButton={true} />
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -103,6 +105,21 @@ const Profile: React.FC = () => {
                     <p className="text-xl font-bold text-indigo-600">{averageScore}%</p>
                   </div>
                 </div>
+                
+                <div className="bg-indigo-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500 mb-2 text-center">Progress Status</p>
+                  <div className="flex justify-center">
+                    {averageScore >= 80 ? (
+                      <Badge className="bg-green-500">Excellent</Badge>
+                    ) : averageScore >= 60 ? (
+                      <Badge className="bg-yellow-500">Good</Badge>
+                    ) : averageScore > 0 ? (
+                      <Badge className="bg-orange-500">Needs Improvement</Badge>
+                    ) : (
+                      <Badge variant="outline">No Data</Badge>
+                    )}
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -122,20 +139,30 @@ const Profile: React.FC = () => {
                     <Badge className="bg-amber-600">Bronze</Badge>
                   </div>
                   <p className="text-xl font-bold text-amber-600">{badges.bronze}</p>
+                  <p className="text-xs mt-1 text-amber-800">50-74% Score</p>
                 </div>
                 <div className="bg-gray-100 p-3 rounded-lg text-center flex-1">
                   <div className="flex justify-center mb-1">
                     <Badge className="bg-gray-400">Silver</Badge>
                   </div>
                   <p className="text-xl font-bold text-gray-600">{badges.silver}</p>
+                  <p className="text-xs mt-1 text-gray-800">75-89% Score</p>
                 </div>
                 <div className="bg-yellow-100 p-3 rounded-lg text-center flex-1">
                   <div className="flex justify-center mb-1">
                     <Badge className="bg-yellow-500">Gold</Badge>
                   </div>
                   <p className="text-xl font-bold text-yellow-600">{badges.gold}</p>
+                  <p className="text-xs mt-1 text-yellow-800">90%+ Score</p>
                 </div>
               </div>
+              
+              {badges.bronze === 0 && badges.silver === 0 && badges.gold === 0 && (
+                <div className="text-center mt-3 p-3 bg-indigo-50 rounded-lg">
+                  <Smile className="h-8 w-8 text-indigo-400 mx-auto mb-2" />
+                  <p className="text-sm text-indigo-700">Complete quizzes to earn badges!</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

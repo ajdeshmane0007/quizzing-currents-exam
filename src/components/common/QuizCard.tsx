@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Quiz } from '@/types';
-import { Calendar, Lock, Clock } from 'lucide-react';
+import { Calendar, Lock, Clock, ChevronRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface QuizCardProps {

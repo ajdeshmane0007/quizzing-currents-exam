@@ -46,7 +46,7 @@ const Dashboard: React.FC = () => {
         description="Track your progress"
       />
       
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Stats */}
         <DashboardStats stats={stats} userType="student" />
         
@@ -89,7 +89,7 @@ const Dashboard: React.FC = () => {
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {recentQuizzes.map((quiz) => (
+            {recentQuizzes.slice(0, 2).map((quiz) => (
               <QuizCard 
                 key={quiz.id} 
                 quiz={quiz} 
@@ -113,11 +113,11 @@ const Dashboard: React.FC = () => {
             </Button>
           </div>
           <div className="grid gap-3">
-            {upcomingExams.map((exam) => (
+            {upcomingExams.slice(0, 1).map((exam) => (
               <ExamCard key={exam.id} exam={exam} />
             ))}
             {upcomingExams.length === 0 && (
-              <div className="text-center py-6 text-gray-500">
+              <div className="text-center py-4 text-gray-500">
                 No upcoming exams scheduled
               </div>
             )}
@@ -125,7 +125,7 @@ const Dashboard: React.FC = () => {
         </div>
         
         {/* Recent Current Affairs */}
-        <div className="bg-white p-4 rounded-lg shadow-sm">
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-16">
           <div className="flex justify-between items-center mb-3">
             <h2 className="text-lg font-semibold flex items-center">
               <BookOpen className="h-5 w-5 mr-2 text-indigo-600" />
@@ -138,7 +138,7 @@ const Dashboard: React.FC = () => {
             </Button>
           </div>
           <div className="grid gap-3">
-            {recentCurrentAffairs.map((article, index) => (
+            {recentCurrentAffairs.slice(0, 1).map((article, index) => (
               <CurrentAffairCard 
                 key={article.id} 
                 article={article} 

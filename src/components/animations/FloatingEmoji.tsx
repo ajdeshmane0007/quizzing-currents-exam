@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Award, PartyPopper, Star, Trophy, X } from 'lucide-react';
+import { Award, PartyPopper, Star, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FloatingEmojiProps {
@@ -12,13 +12,13 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
   const [emojis, setEmojis] = useState<{ id: number; x: number; y: number; type: number; scale: number; delay: number; rotation: number }[]>([]);
   
   useEffect(() => {
-    if (show) {
-      // Create emojis for a mobile-centric view (fewer but larger)
+    if (show && isCorrect) {
+      // Only show emojis for correct answers
       const newEmojis = Array.from({ length: 20 }, (_, i) => ({
         id: Date.now() + i,
         x: Math.random() * 80 + 10, // Keep emojis more centered horizontally
         y: Math.random() * 70 + 15, // Distribute vertically but avoid edges
-        type: Math.floor(Math.random() * (isCorrect ? 4 : 1)), // Only X icon for wrong answers
+        type: Math.floor(Math.random() * 4), // Use all icon types for correct answers
         scale: Math.random() * 0.4 + 0.8, // Larger scale for mobile view
         delay: Math.random() * 1000, // Faster animations for mobile
         rotation: Math.random() * 360 - 180 // Less rotation for cleaner look
@@ -30,16 +30,15 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
       }, 2500); // Shorter duration for mobile UX
 
       return () => clearTimeout(timer);
+    } else {
+      // For wrong answers or when not showing, clear emojis
+      setEmojis([]);
     }
   }, [show, isCorrect]);
 
-  if (!show) return null;
+  if (!show || !isCorrect) return null;
 
   const getEmoji = (type: number) => {
-    if (!isCorrect) {
-      return <X className="w-[80px] h-[80px] text-red-500" />;
-    }
-
     switch (type) {
       case 0:
         return <Star className="w-[80px] h-[80px] text-yellow-400" />;
@@ -55,9 +54,7 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
   return (
     <div className={cn(
       "fixed inset-0 pointer-events-none overflow-hidden z-50",
-      isCorrect 
-        ? "bg-black/40" 
-        : "bg-black/50"
+      "bg-black/40"
     )}>
       {emojis.map((emoji) => (
         <div

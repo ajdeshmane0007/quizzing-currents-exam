@@ -27,6 +27,7 @@ import AdminCurrentAffairs from "./pages/admin/CurrentAffairs";
 import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
 import ClassManagement from "./pages/admin/ClassManagement";
 import SubjectManagement from "./pages/admin/SubjectManagement";
+import AdvertisementManagement from "./pages/admin/AdvertisementManagement";
 
 // Other Pages
 import NotFound from "./pages/NotFound";
@@ -69,6 +70,9 @@ const App = () => (
               {/* Class & Subject Management */}
               <Route path="/admin/classes" element={<ClassManagement />} />
               <Route path="/admin/subjects" element={<SubjectManagement />} />
+              
+              {/* Advertisement Management */}
+              <Route path="/admin/advertisements" element={<AdvertisementManagement />} />
               
               {/* Current Affairs Routes */}
               <Route path="/admin/current-affairs" element={<AdminCurrentAffairs />} />

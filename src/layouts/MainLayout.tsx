@@ -6,6 +6,7 @@ import BottomNav from '@/components/common/BottomNav';
 import { useApp } from '@/contexts/AppContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TokenDisplay from '@/components/common/TokenDisplay';
+import AdminSidebar from '@/components/admin/AdminSidebar';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -29,9 +30,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </div>
         )}
         
-        <div className={`flex-1 px-4 py-3 md:px-6 ${isMobile ? 'pb-20' : ''}`}>
-          {children}
+        <div className="flex flex-1">
+          {/* Admin Sidebar (visible only for admin and on non-mobile) */}
+          {isAdmin && !isMobile && <AdminSidebar />}
+          
+          <div className={`flex-1 px-4 py-3 md:px-6 ${isMobile ? 'pb-20' : ''}`}>
+            {children}
+          </div>
         </div>
+        
         {isMobile && isAuthenticated ? <BottomNav /> : <Footer />}
       </div>
     </div>

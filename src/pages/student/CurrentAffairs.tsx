@@ -54,7 +54,7 @@ const CurrentAffairs: React.FC = () => {
   return (
     <MainLayout>
       <div className="mb-6">
-        <div className="bg-gradient-to-r from-green-600 to-teal-500 rounded-lg p-6 shadow-lg">
+        <div className="bg-gradient-to-r from-teal-600 to-emerald-500 rounded-lg p-6 shadow-lg">
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Current Affairs</h1>
           <p className="text-white/80 text-sm md:text-base">
             {!isMobile ? "Stay updated with the latest news and developments around the world." : "Latest news for your exams"}
@@ -97,8 +97,8 @@ const CurrentAffairs: React.FC = () => {
           <p className="text-slate-500 font-medium">No current affairs found based on your filters.</p>
         </div>
       ) : (
-        <div className="relative bg-white rounded-lg p-6 shadow-md">
-          <h3 className="text-xl font-bold mb-4 text-gray-800 border-b border-gray-100 pb-3 flex items-center">
+        <div className="relative bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg p-6 shadow-md">
+          <h3 className="text-xl font-bold mb-4 text-teal-800 border-b border-teal-100 pb-3 flex items-center">
             <Newspaper className="mr-2 h-5 w-5 text-teal-600" />
             Latest News
           </h3>

@@ -27,6 +27,7 @@ import Profile from "./pages/student/Profile";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminCurrentAffairs from "./pages/admin/CurrentAffairs";
 import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
+import AdminUpcomingExams from "./pages/admin/UpcomingExams";
 import ClassManagement from "./pages/admin/ClassManagement";
 import SubjectManagement from "./pages/admin/SubjectManagement";
 import TokenRecharge from "./pages/admin/TokenRecharge";
@@ -36,6 +37,7 @@ import StudentManagement from "./pages/admin/StudentManagement";
 // Other Pages
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
+import Onboarding from "./components/student/Onboarding";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/onboarding" element={<Onboarding />} />
 
             {/* Student Routes */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
@@ -89,14 +92,15 @@ const App = () => (
               <Route path="/admin/current-affairs/new" element={<AdminCurrentAffairForm />} />
               <Route path="/admin/current-affairs/:id" element={<AdminCurrentAffairForm />} />
               
+              {/* Exam Management */}
+              <Route path="/admin/exams" element={<AdminUpcomingExams />} />
+              
               {/* Student Management */}
               <Route path="/admin/students" element={<StudentManagement />} />
               
               {/* Other Admin Routes */}
               <Route path="/admin/quizzes" element={<AdminDashboard />} />
               <Route path="/admin/quizzes/new" element={<AdminDashboard />} />
-              <Route path="/admin/exams" element={<AdminDashboard />} />
-              <Route path="/admin/exams/new" element={<AdminDashboard />} />
               <Route path="/admin/profile" element={<AdminDashboard />} />
             </Route>
 

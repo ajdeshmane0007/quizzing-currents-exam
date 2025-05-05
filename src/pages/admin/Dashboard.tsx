@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -67,7 +66,7 @@ const AdminDashboard: React.FC = () => {
             <Link to="/admin/quizzes/new">Create Quiz</Link>
           </Button>
           <Button asChild variant="outline" size={isMobile ? "sm" : "default"}>
-            <Link to="/admin/exams/new">Schedule Exam</Link>
+            <Link to="/admin/exams">Schedule Exam</Link>
           </Button>
         </div>
       </PageHeader>
@@ -164,6 +163,21 @@ const AdminDashboard: React.FC = () => {
               <p className="text-xs text-muted-foreground mb-2">Manage student accounts</p>
               <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
                 <Link to="/admin/students">Manage Students</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-indigo-600" />
+                Upcoming Exams
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 pb-3">
+              <p className="text-xs text-muted-foreground mb-2">Manage exam schedules</p>
+              <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
+                <Link to="/admin/exams">View Exams</Link>
               </Button>
             </CardContent>
           </Card>

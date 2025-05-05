@@ -193,11 +193,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       ...exam,
       id: `exam-${Date.now()}`,
     };
+    console.log("Creating new exam:", newExam);
     setExams([...exams, newExam]);
+    
+    // Show success notification
+    toast({
+      title: "Exam Scheduled",
+      description: `${newExam.title} has been scheduled successfully.`
+    });
   };
   
   const updateExam = (exam: Exam) => {
+    console.log("Updating exam:", exam);
     setExams(exams.map(e => e.id === exam.id ? exam : e));
+    
+    // Show success notification
+    toast({
+      title: "Exam Updated",
+      description: `${exam.title} has been updated successfully.`
+    });
   };
   
   const deleteExam = (id: string) => {

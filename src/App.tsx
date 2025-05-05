@@ -28,6 +28,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminCurrentAffairs from "./pages/admin/CurrentAffairs";
 import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
 import AdminUpcomingExams from "./pages/admin/UpcomingExams";
+import ExamForm from "./pages/admin/ExamForm"; // Added import for ExamForm
 import ClassManagement from "./pages/admin/ClassManagement";
 import SubjectManagement from "./pages/admin/SubjectManagement";
 import TokenRecharge from "./pages/admin/TokenRecharge";
@@ -94,6 +95,8 @@ const App = () => (
               
               {/* Exam Management */}
               <Route path="/admin/exams" element={<AdminUpcomingExams />} />
+              <Route path="/admin/exams/new" element={<ExamForm />} />
+              <Route path="/admin/exams/:id" element={<ExamForm />} />
               
               {/* Student Management */}
               <Route path="/admin/students" element={<StudentManagement />} />

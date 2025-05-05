@@ -66,7 +66,7 @@ const AdminDashboard: React.FC = () => {
             <Link to="/admin/quizzes/new">Create Quiz</Link>
           </Button>
           <Button asChild variant="outline" size={isMobile ? "sm" : "default"}>
-            <Link to="/admin/exams">Schedule Exam</Link>
+            <Link to="/admin/exams/new">Schedule Exam</Link>
           </Button>
         </div>
       </PageHeader>

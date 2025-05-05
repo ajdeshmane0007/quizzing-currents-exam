@@ -21,17 +21,17 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, isUpcoming = true }) => {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
-    }).format(date);
+    }).format(new Date(date));
   };
 
   // Check if exam is active (current date is between start and end dates)
-  const isActive = new Date() >= exam.startDate && new Date() <= exam.endDate;
+  const isActive = new Date() >= new Date(exam.startDate) && new Date() <= new Date(exam.endDate);
 
   // Calculate status
   const getStatus = () => {
     if (!isUpcoming) return "Completed";
     if (isActive) return "Active";
-    if (new Date() < exam.startDate) return "Upcoming";
+    if (new Date() < new Date(exam.startDate)) return "Upcoming";
     return "Ended";
   };
 
@@ -47,6 +47,13 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, isUpcoming = true }) => {
       default: return "outline";
     }
   };
+
+  // Display subject if available
+  const subjectInfo = exam.subject ? (
+    <div className="flex items-center gap-2 text-xs">
+      <span className="font-medium">Subject:</span> {exam.subject}
+    </div>
+  ) : null;
 
   return (
     <Card className="h-full">
@@ -71,6 +78,7 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, isUpcoming = true }) => {
             <Clock className="h-3 w-3 text-quiz-purple" />
             <span>Duration: {exam.duration} minutes</span>
           </div>
+          {subjectInfo}
         </div>
       </CardContent>
       <CardFooter className="pt-2 pb-3">
@@ -78,7 +86,7 @@ const ExamCard: React.FC<ExamCardProps> = ({ exam, isUpcoming = true }) => {
           asChild 
           className="w-full text-sm py-1 h-8"
           variant={isActive ? "default" : "outline"}
-          disabled={!isUpcoming || (!isActive && new Date() < exam.startDate)}
+          disabled={!isUpcoming || (!isActive && new Date() < new Date(exam.startDate))}
           size="sm"
         >
           <Link to={`/exams/${exam.id}`}>

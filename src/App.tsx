@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,6 +29,7 @@ import AdminCurrentAffairs from "./pages/admin/CurrentAffairs";
 import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
 import ClassManagement from "./pages/admin/ClassManagement";
 import SubjectManagement from "./pages/admin/SubjectManagement";
+import TokenRecharge from "./pages/admin/TokenRecharge";
 import AdvertisementManagement from "./pages/admin/AdvertisementManagement";
 import StudentManagement from "./pages/admin/StudentManagement";
 
@@ -75,6 +77,9 @@ const App = () => (
               {/* Class & Subject Management */}
               <Route path="/admin/classes" element={<ClassManagement />} />
               <Route path="/admin/subjects" element={<SubjectManagement />} />
+              
+              {/* Token Management */}
+              <Route path="/admin/tokens" element={<TokenRecharge />} />
               
               {/* Advertisement Management */}
               <Route path="/admin/advertisements" element={<AdvertisementManagement />} />

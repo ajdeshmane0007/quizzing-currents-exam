@@ -26,9 +26,10 @@ interface Subject {
 
 const SubjectManagement: React.FC = () => {
   const { toast } = useToast();
+  const { classes: appClasses = [] } = useApp();
   
-  // Dummy class data
-  const classes = [
+  // Use classes from AppContext instead of hardcoded ones
+  const classes = appClasses.length ? appClasses : [
     { id: 'class-1', name: 'Class 1' },
     { id: 'class-2', name: 'Class 2' },
     { id: 'class-3', name: 'Class 3' },

@@ -8,7 +8,10 @@ import DashboardStats from '@/components/common/DashboardStats';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BookOpen, Calendar, Activity, Users, BookOpenCheck, BookmarkPlus, GraduationCap } from 'lucide-react';
+import { 
+  BookOpen, Calendar, Activity, Users, BookOpenCheck, BookmarkPlus, GraduationCap,
+  Wallet, CreditCard
+} from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const AdminDashboard: React.FC = () => {
@@ -60,7 +63,7 @@ const AdminDashboard: React.FC = () => {
         description={!isMobile ? "Manage your quizzes, exams, and monitor student performance." : ""}
       >
         <div className="flex gap-2">
-          <Button asChild size={isMobile ? "sm" : "default"} className="bg-indigo-600 hover:bg-indigo-700">
+          <Button asChild size={isMobile ? "sm" : "default"} className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700">
             <Link to="/admin/quizzes/new">Create Quiz</Link>
           </Button>
           <Button asChild variant="outline" size={isMobile ? "sm" : "default"}>
@@ -74,7 +77,7 @@ const AdminDashboard: React.FC = () => {
         <DashboardStats stats={stats} userType="admin" />
         
         {/* Main Admin Features */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <Card className="hover:shadow-md transition-all">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
@@ -131,6 +134,36 @@ const AdminDashboard: React.FC = () => {
               <p className="text-xs text-muted-foreground mb-2">Add news articles</p>
               <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
                 <Link to="/admin/current-affairs">Manage News</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-all bg-gradient-to-r from-emerald-50 to-green-100">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Wallet className="h-4 w-4 text-emerald-600" />
+                Token Recharge
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 pb-3">
+              <p className="text-xs text-muted-foreground mb-2">Add tokens to student accounts</p>
+              <Button asChild size="sm" className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700">
+                <Link to="/admin/tokens">Manage Tokens</Link>
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="hover:shadow-md transition-all">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Users className="h-4 w-4 text-indigo-600" />
+                Students
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 pb-3">
+              <p className="text-xs text-muted-foreground mb-2">Manage student accounts</p>
+              <Button asChild size="sm" className="w-full bg-indigo-600 hover:bg-indigo-700">
+                <Link to="/admin/students">Manage Students</Link>
               </Button>
             </CardContent>
           </Card>

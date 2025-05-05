@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Award, PartyPopper, Star, Trophy, Smile } from 'lucide-react';
+import { Award, PartyPopper, Star, Trophy, Smile, Sparkles, ThumbsUp, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface FloatingEmojiProps {
@@ -13,15 +13,15 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
   
   useEffect(() => {
     if (show && isCorrect) {
-      // Only show emojis for correct answers - Telegram style
-      const newEmojis = Array.from({ length: 15 }, (_, i) => ({
+      // Enhanced Telegram style animations with more emojis and better distribution
+      const newEmojis = Array.from({ length: 20 }, (_, i) => ({
         id: Date.now() + i,
         x: Math.random() * 80 + 10, // Keep emojis more centered horizontally
-        y: Math.random() * 70 + 15, // Distribute vertically but avoid edges
-        type: Math.floor(Math.random() * 5), // More variety of emoji types
-        scale: Math.random() * 0.5 + 0.8, // Larger scale for mobile view
-        delay: Math.random() * 800, // Faster animations for mobile
-        rotation: (Math.random() * 60 - 30) // Less rotation for cleaner look
+        y: Math.random() * 80 + 10, // Better vertical distribution
+        type: Math.floor(Math.random() * 7), // More variety of emoji types
+        scale: Math.random() * 0.6 + 0.8, // Varied scale for dynamic effect
+        delay: Math.random() * 700, // Faster animations for better effect
+        rotation: (Math.random() * 60 - 30) // Some rotation for natural feel
       }));
       setEmojis(newEmojis);
 
@@ -48,6 +48,12 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
         return <PartyPopper className="w-[60px] h-[60px] text-purple-500 animate-bounce" />;
       case 3:
         return <Smile className="w-[60px] h-[60px] text-blue-500 animate-pulse" />;
+      case 4:
+        return <Sparkles className="w-[60px] h-[60px] text-amber-400 animate-bounce" />;
+      case 5:
+        return <ThumbsUp className="w-[60px] h-[60px] text-green-500 animate-pulse" />;
+      case 6:
+        return <Heart className="w-[60px] h-[60px] text-red-500 animate-bounce" />;
       default:
         return <Award className="w-[60px] h-[60px] text-green-500 animate-bounce" />;
     }
@@ -56,7 +62,7 @@ const FloatingEmoji: React.FC<FloatingEmojiProps> = ({ show, isCorrect = true })
   return (
     <div className={cn(
       "fixed inset-0 pointer-events-none overflow-hidden z-50",
-      "bg-black/30" // Less opacity for better visibility
+      "bg-black/20" // Less opacity for better visibility
     )}>
       {emojis.map((emoji) => (
         <div

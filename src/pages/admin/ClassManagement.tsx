@@ -7,28 +7,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { PlusCircle, Edit, Trash } from 'lucide-react';
-
-// In a real app, this would be defined in types/index.ts
-interface Class {
-  id: string;
-  name: string;
-  subjects: number;
-}
 
 const ClassManagement: React.FC = () => {
   const { toast } = useToast();
-  const [classes, setClasses] = useState<Class[]>([
-    { id: 'class-1', name: 'Class 1', subjects: 4 },
-    { id: 'class-2', name: 'Class 2', subjects: 5 },
-    { id: 'class-3', name: 'Class 3', subjects: 6 },
-    { id: 'class-4', name: 'Class 4', subjects: 5 },
-    { id: 'class-5', name: 'Class 5', subjects: 7 },
-  ]);
+  const { classes, createClass, updateClass, deleteClass } = useApp();
   
   const [newClassName, setNewClassName] = useState('');
-  const [editingClass, setEditingClass] = useState<Class | null>(null);
+  const [editingClass, setEditingClass] = useState<{ id: string; name: string; subjects: number } | null>(null);
   
   const handleAddClass = () => {
     if (!newClassName.trim()) {
@@ -40,21 +27,11 @@ const ClassManagement: React.FC = () => {
       return;
     }
     
-    const newClass = {
-      id: `class-${Date.now()}`,
-      name: newClassName,
-      subjects: 0,
-    };
-    
-    setClasses([...classes, newClass]);
+    createClass(newClassName);
     setNewClassName('');
-    toast({
-      title: "Success",
-      description: `${newClassName} has been added`,
-    });
   };
   
-  const handleEditClass = (classItem: Class) => {
+  const handleEditClass = (classItem: { id: string; name: string; subjects: number }) => {
     setEditingClass(classItem);
     setNewClassName(classItem.name);
   };
@@ -62,24 +39,18 @@ const ClassManagement: React.FC = () => {
   const handleSaveEdit = () => {
     if (!editingClass || !newClassName.trim()) return;
     
-    setClasses(classes.map(c => 
-      c.id === editingClass.id ? { ...c, name: newClassName } : c
-    ));
+    const updatedClass = {
+      ...editingClass,
+      name: newClassName
+    };
     
+    updateClass(updatedClass);
     setEditingClass(null);
     setNewClassName('');
-    toast({
-      title: "Success",
-      description: "Class updated successfully",
-    });
   };
   
   const handleDeleteClass = (id: string) => {
-    setClasses(classes.filter(c => c.id !== id));
-    toast({
-      title: "Success",
-      description: "Class deleted successfully",
-    });
+    deleteClass(id);
   };
 
   return (

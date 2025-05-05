@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User, Quiz, CurrentAffair, Exam, QuizResult } from '../types';
 import { 
@@ -9,6 +8,13 @@ import {
   mockQuizResults 
 } from '../data/mockData';
 import { toast } from '@/hooks/use-toast';
+
+// Define the Class interface
+interface Class {
+  id: string;
+  name: string;
+  subjects: number;
+}
 
 interface AppContextType {
   // Auth
@@ -23,6 +29,7 @@ interface AppContextType {
   exams: Exam[];
   results: QuizResult[];
   mockUsers: User[];
+  classes: Class[]; // Add classes property
   
   // Admin functions
   createQuiz: (quiz: Omit<Quiz, 'id' | 'createdAt'>) => void;
@@ -34,6 +41,11 @@ interface AppContextType {
   createExam: (exam: Omit<Exam, 'id'>) => void;
   updateExam: (exam: Exam) => void;
   deleteExam: (id: string) => void;
+  
+  // Class management functions
+  createClass: (className: string) => void;
+  updateClass: (classItem: Class) => void;
+  deleteClass: (id: string) => void;
   
   // Student functions
   submitQuizResult: (result: Omit<QuizResult, 'completedAt'>) => void;
@@ -51,6 +63,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [currentAffairs, setCurrentAffairs] = useState<CurrentAffair[]>(mockCurrentAffairs);
   const [exams, setExams] = useState<Exam[]>(mockExams);
   const [results, setResults] = useState<QuizResult[]>(mockQuizResults);
+  
+  // Initialize classes state with dummy data
+  const [classes, setClasses] = useState<Class[]>([
+    { id: 'class-1', name: 'Class 1', subjects: 4 },
+    { id: 'class-2', name: 'Class 2', subjects: 5 },
+    { id: 'class-3', name: 'Class 3', subjects: 6 },
+    { id: 'class-4', name: 'Class 4', subjects: 5 },
+    { id: 'class-5', name: 'Class 5', subjects: 7 },
+  ]);
   
   // Auth functions
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -183,6 +204,39 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setExams(exams.filter(e => e.id !== id));
   };
   
+  // Class management functions
+  const createClass = (className: string) => {
+    if (!className.trim()) return;
+    
+    const newClass: Class = {
+      id: `class-${Date.now()}`,
+      name: className,
+      subjects: 0,
+    };
+    
+    setClasses([...classes, newClass]);
+    toast({
+      title: "Class Created",
+      description: `${className} has been added successfully.`
+    });
+  };
+  
+  const updateClass = (classItem: Class) => {
+    setClasses(classes.map(c => c.id === classItem.id ? classItem : c));
+    toast({
+      title: "Class Updated",
+      description: `${classItem.name} has been updated successfully.`
+    });
+  };
+  
+  const deleteClass = (id: string) => {
+    setClasses(classes.filter(c => c.id !== id));
+    toast({
+      title: "Class Deleted",
+      description: "Class has been deleted successfully."
+    });
+  };
+  
   // Student functions
   const submitQuizResult = (result: Omit<QuizResult, 'completedAt'>) => {
     const newResult: QuizResult = {
@@ -226,6 +280,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         exams,
         results,
         mockUsers,
+        classes, // Add classes to the context value
         createQuiz,
         updateQuiz,
         deleteQuiz,
@@ -235,6 +290,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         createExam,
         updateExam,
         deleteExam,
+        createClass,
+        updateClass,
+        deleteClass,
         submitQuizResult,
         addTokens,
         consumeTokens,

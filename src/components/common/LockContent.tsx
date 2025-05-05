@@ -11,16 +11,23 @@ interface LockContentProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
+  isPremium?: boolean; // Added isPremium prop
 }
 
 const LockContent: React.FC<LockContentProps> = ({ 
   tokenCost = 1, 
   children,
   title = "Locked Content", 
-  description = "You need tokens to access this content"
+  description = "You need tokens to access this content",
+  isPremium = false // Default value
 }) => {
   const { currentUser, consumeTokens } = useApp();
   const [unlocked, setUnlocked] = useState(false);
+  
+  // If content is not premium, show it directly
+  if (!isPremium) {
+    return <>{children}</>;
+  }
   
   const handleUnlock = () => {
     if (consumeTokens(tokenCost)) {

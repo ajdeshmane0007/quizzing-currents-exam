@@ -49,6 +49,7 @@ export interface Exam {
   startDate: Date;
   endDate: Date;
   duration: number; // in minutes
+  subject?: string; // Added subject field as optional
 }
 
 export interface QuizResult {

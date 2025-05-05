@@ -106,7 +106,7 @@ const AdminUpcomingExams: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Exam Name</TableHead>
-                    <TableHead>Subject</TableHead>
+                    <TableHead>Description</TableHead>
                     <TableHead>Start Date</TableHead>
                     <TableHead>Duration</TableHead>
                     <TableHead>Status</TableHead>
@@ -117,7 +117,7 @@ const AdminUpcomingExams: React.FC = () => {
                   {filteredExams.map((exam) => (
                     <TableRow key={exam.id}>
                       <TableCell className="font-medium">{exam.title}</TableCell>
-                      <TableCell>{exam.subject}</TableCell>
+                      <TableCell>{exam.description.substring(0, 30)}...</TableCell>
                       <TableCell>{format(new Date(exam.startDate), 'MMM dd, yyyy')}</TableCell>
                       <TableCell>
                         <div className="flex items-center">

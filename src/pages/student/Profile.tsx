@@ -42,7 +42,7 @@ const Profile: React.FC = () => {
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center justify-between">
               <span>Personal Information</span>
-              <TokenDisplay showAddButton={true} />
+              <TokenDisplay showAddButton={false} />
             </CardTitle>
           </CardHeader>
           <CardContent>

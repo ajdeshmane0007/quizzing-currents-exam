@@ -18,8 +18,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-indigo-50">
-      {/* Responsive container - mobile first with tablet/desktop breakpoints */}
-      <div className="w-full max-w-full bg-white min-h-screen flex flex-col shadow-sm border border-gray-100">
+      {/* Responsive container - different max widths based on screen size */}
+      <div className="w-full max-w-full md:max-w-5xl lg:max-w-6xl bg-white min-h-screen flex flex-col shadow-sm border border-gray-100">
         <Navbar />
         
         {/* Show token display for students in the header area */}

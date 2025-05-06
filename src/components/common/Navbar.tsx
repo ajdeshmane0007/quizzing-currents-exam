@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Book, Menu, X } from 'lucide-react';
+import { Book, Menu, X, LogIn, UserPlus } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
             <Book className="h-7 w-7 text-quiz-purple" />
-            <span className="ml-2 text-lg font-bold text-quiz-purple">
+            <span className="ml-2 text-lg font-bold bg-gradient-to-r from-quiz-purple to-blue-500 bg-clip-text text-transparent">
               QuizMaster
             </span>
           </Link>
@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
               <SheetContent side="left" className="w-64">
                 <Link to="/" className="flex items-center mb-6">
                   <Book className="h-6 w-6 text-quiz-purple" />
-                  <span className="ml-2 text-xl font-bold text-quiz-purple">
+                  <span className="ml-2 text-xl font-bold bg-gradient-to-r from-quiz-purple to-blue-500 bg-clip-text text-transparent">
                     QuizMaster
                   </span>
                 </Link>
@@ -95,7 +95,7 @@ const Navbar: React.FC = () => {
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full p-0">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={currentUser?.avatarUrl} />
-                    <AvatarFallback className="bg-quiz-purple text-white text-xs">
+                    <AvatarFallback className="bg-gradient-to-r from-quiz-purple to-blue-500 text-white text-xs">
                       {currentUser?.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -114,10 +114,16 @@ const Navbar: React.FC = () => {
         ) : (
           <div className="space-x-2">
             <Button variant="outline" size="sm" asChild>
-              <Link to="/login">Login</Link>
+              <Link to="/login" className="flex items-center gap-1">
+                <LogIn className="h-3.5 w-3.5" />
+                Login
+              </Link>
             </Button>
-            <Button size="sm" asChild>
-              <Link to="/register">Register</Link>
+            <Button variant="gradient" size="sm" asChild className="shadow-md">
+              <Link to="/register" className="flex items-center gap-1">
+                <UserPlus className="h-3.5 w-3.5" />
+                Register
+              </Link>
             </Button>
           </div>
         )}

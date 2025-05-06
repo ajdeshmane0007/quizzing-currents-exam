@@ -1,27 +1,25 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileSearch, Newspaper, Tag } from 'lucide-react';
+import { FileSearch, Newspaper, Tag, ChevronUp } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import { type CarouselApi } from '@/components/ui/carousel';
+import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const CurrentAffairs: React.FC = () => {
   const { currentAffairs } = useApp();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string | null>(null);
   const isMobile = useIsMobile();
-  const [api, setApi] = useState<CarouselApi>();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   // Extract unique categories
   const categories = Array.from(
@@ -45,11 +43,93 @@ const CurrentAffairs: React.FC = () => {
     (a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()
   );
 
-  const handleNext = () => {
-    if (api) {
-      api.scrollNext();
+  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const threshold = 50;
+    if (info.offset.y < -threshold && currentIndex < sortedArticles.length - 1) {
+      // Swiped up, go to next article
+      setDirection(-1);
+      setCurrentIndex(prev => prev + 1);
+    } else if (info.offset.y > threshold && currentIndex > 0) {
+      // Swiped down, go to previous article
+      setDirection(1);
+      setCurrentIndex(prev => prev - 1);
     }
   };
+
+  const variants = {
+    enter: (direction: number) => ({
+      y: direction > 0 ? 500 : -500,
+      opacity: 0
+    }),
+    center: {
+      y: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      y: direction < 0 ? 500 : -500,
+      opacity: 0
+    })
+  };
+
+  // Auto-adjust the container height based on content
+  useEffect(() => {
+    if (containerRef.current && sortedArticles.length > 0) {
+      const cardElement = document.querySelector('.current-affair-card');
+      if (cardElement) {
+        containerRef.current.style.height = `${cardElement.clientHeight}px`;
+      }
+    }
+  }, [sortedArticles, currentIndex]);
+
+  // If no articles found
+  if (sortedArticles.length === 0) {
+    return (
+      <MainLayout>
+        <div className="mb-6">
+          <div className="bg-gradient-to-r from-teal-600 to-emerald-500 rounded-lg p-6 shadow-lg">
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Current Affairs</h1>
+            <p className="text-white/80 text-sm md:text-base">
+              {!isMobile ? "Stay updated with the latest news and developments around the world." : "Latest news for your exams"}
+            </p>
+          </div>
+        </div>
+        
+        <div className="mb-6 space-y-4">
+          <div className="relative">
+            <FileSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search articles..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-10 border-teal-100 focus-visible:ring-teal-500 bg-white shadow-sm"
+            />
+          </div>
+          
+          <Select value={category || "all"} onValueChange={(val) => setCategory(val === "all" ? null : val)}>
+            <SelectTrigger className="border-teal-100 focus-visible:ring-teal-500 bg-white shadow-sm">
+              <div className="flex items-center">
+                <Tag className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Category" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {categories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="bg-slate-50 rounded-lg p-8 text-center shadow-md">
+          <Newspaper className="h-12 w-12 mx-auto text-slate-400 mb-3" />
+          <p className="text-slate-500 font-medium">No current affairs found based on your filters.</p>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -62,65 +142,104 @@ const CurrentAffairs: React.FC = () => {
         </div>
       </div>
       
-      <div className="mb-6 space-y-4 sm:space-y-0 sm:grid sm:gap-4 sm:grid-cols-3">
-        <div className="relative sm:col-span-2">
-          <FileSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search articles..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 border-teal-100 focus-visible:ring-teal-500 bg-white shadow-sm"
-          />
-        </div>
-        
-        <Select value={category || "all"} onValueChange={(val) => setCategory(val === "all" ? null : val)}>
-          <SelectTrigger className="border-teal-100 focus-visible:ring-teal-500 bg-white shadow-sm">
-            <div className="flex items-center">
-              <Tag className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="Category" />
+      {/* Slide-in search and filter panel */}
+      <AnimatePresence>
+        {isSearchVisible && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="mb-6 space-y-4 overflow-hidden"
+          >
+            <div className="relative">
+              <FileSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search articles..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10 border-teal-100 focus-visible:ring-teal-500 bg-white shadow-sm"
+              />
             </div>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+            
+            <Select value={category || "all"} onValueChange={(val) => setCategory(val === "all" ? null : val)}>
+              <SelectTrigger className="border-teal-100 focus-visible:ring-teal-500 bg-white shadow-sm">
+                <div className="flex items-center">
+                  <Tag className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Category" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      <div className="flex justify-center mb-4">
+        <Button 
+          variant="outline" 
+          onClick={() => setIsSearchVisible(!isSearchVisible)}
+          className="flex items-center gap-2 rounded-full px-4 shadow-sm"
+        >
+          {isSearchVisible ? "Hide Filters" : "Search & Filter"}
+          <ChevronUp className={`h-4 w-4 transition-transform ${isSearchVisible ? "rotate-180" : ""}`} />
+        </Button>
       </div>
       
-      {sortedArticles.length === 0 ? (
-        <div className="bg-slate-50 rounded-lg p-8 text-center shadow-md">
-          <Newspaper className="h-12 w-12 mx-auto text-slate-400 mb-3" />
-          <p className="text-slate-500 font-medium">No current affairs found based on your filters.</p>
+      {/* TikTok-style swipeable interface */}
+      <div className="relative h-[600px] bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg shadow-md overflow-hidden" ref={containerRef}>
+        <div className="absolute left-4 top-4 z-10 text-xs bg-black/60 text-white px-2 py-1 rounded-full">
+          {currentIndex + 1}/{sortedArticles.length}
         </div>
-      ) : (
-        <div className="relative bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg p-6 shadow-md">
-          <h3 className="text-xl font-bold mb-4 text-teal-800 border-b border-teal-100 pb-3 flex items-center">
-            <Newspaper className="mr-2 h-5 w-5 text-teal-600" />
-            Latest News
-          </h3>
-          
-          <Carousel setApi={setApi} opts={{ align: "start" }}>
-            <CarouselContent className="h-full">
-              {sortedArticles.map((article, index) => (
-                <CarouselItem key={article.id} className="md:basis-1/2">
-                  <CurrentAffairCard 
-                    article={article} 
-                    onNext={index < sortedArticles.length - 1 ? handleNext : undefined} 
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="hidden sm:block">
-              <CarouselPrevious className="-left-3 top-1/2 bg-white" />
-              <CarouselNext className="-right-3 top-1/2 bg-white" />
-            </div>
-          </Carousel>
+        
+        <AnimatePresence custom={direction}>
+          {sortedArticles[currentIndex] && (
+            <motion.div
+              key={sortedArticles[currentIndex].id}
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                y: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 }
+              }}
+              drag="y"
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={1}
+              onDragEnd={handleDragEnd}
+              className="absolute w-full h-full flex justify-center items-center px-4 py-6"
+            >
+              <div className="w-full max-w-md current-affair-card">
+                <CurrentAffairCard 
+                  article={sortedArticles[currentIndex]} 
+                  onNext={currentIndex < sortedArticles.length - 1 ? () => {
+                    setDirection(-1);
+                    setCurrentIndex(prev => prev + 1);
+                  } : undefined}
+                  fullContent={true}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Swipe instruction */}
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+          <div className="bg-black/60 text-white text-xs rounded-full px-3 py-1 flex items-center gap-1">
+            <span>Swipe</span>
+            <ChevronUp className="h-3 w-3" />
+            <span>to navigate</span>
+          </div>
         </div>
-      )}
+      </div>
     </MainLayout>
   );
 };

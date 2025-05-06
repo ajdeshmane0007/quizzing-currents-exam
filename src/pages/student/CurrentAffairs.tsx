@@ -1,15 +1,15 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileSearch, Newspaper, Tag, ChevronUp } from 'lucide-react';
+import { FileSearch, Newspaper, Tag, ChevronUp, Lightbulb, BookOpen } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 
 const CurrentAffairs: React.FC = () => {
   const { currentAffairs } = useApp();
@@ -131,6 +131,9 @@ const CurrentAffairs: React.FC = () => {
     );
   }
 
+  // End of current affairs - show quiz suggestion card
+  const isAllArticlesViewed = currentIndex >= sortedArticles.length;
+
   return (
     <MainLayout>
       <div className="mb-6">
@@ -195,39 +198,78 @@ const CurrentAffairs: React.FC = () => {
       {/* TikTok-style swipeable interface */}
       <div className="relative h-[600px] bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg shadow-md overflow-hidden" ref={containerRef}>
         <div className="absolute left-4 top-4 z-10 text-xs bg-black/60 text-white px-2 py-1 rounded-full">
-          {currentIndex + 1}/{sortedArticles.length}
+          {isAllArticlesViewed ? 'End' : `${currentIndex + 1}/${sortedArticles.length}`}
         </div>
         
         <AnimatePresence custom={direction}>
-          {sortedArticles[currentIndex] && (
+          {isAllArticlesViewed ? (
             <motion.div
-              key={sortedArticles[currentIndex].id}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                y: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 }
-              }}
-              drag="y"
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={1}
-              onDragEnd={handleDragEnd}
+              key="end-card"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
               className="absolute w-full h-full flex justify-center items-center px-4 py-6"
             >
-              <div className="w-full max-w-md current-affair-card">
-                <CurrentAffairCard 
-                  article={sortedArticles[currentIndex]} 
-                  onNext={currentIndex < sortedArticles.length - 1 ? () => {
-                    setDirection(-1);
-                    setCurrentIndex(prev => prev + 1);
-                  } : undefined}
-                  fullContent={true}
-                />
+              <div className="w-full max-w-md">
+                <Card className="border-2 border-purple-200 shadow-lg">
+                  <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                    <CardTitle className="text-center flex items-center justify-center">
+                      <Lightbulb className="h-5 w-5 mr-2" />
+                      You're All Caught Up!
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 text-center">
+                    <div className="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                      <BookOpen className="h-10 w-10 text-purple-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Ready to test your knowledge?</h3>
+                    <p className="text-gray-600 mb-4">Now that you're up to date with current affairs, test your understanding with our quizzes.</p>
+                  </CardContent>
+                  <CardFooter className="flex justify-center pb-6 gap-3">
+                    <Button asChild className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+                      <Link to="/quizzes">Try a Quiz</Link>
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => setCurrentIndex(0)}
+                    >
+                      Start Over
+                    </Button>
+                  </CardFooter>
+                </Card>
               </div>
             </motion.div>
+          ) : (
+            sortedArticles[currentIndex] && (
+              <motion.div
+                key={sortedArticles[currentIndex].id}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  y: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 }
+                }}
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={1}
+                onDragEnd={handleDragEnd}
+                className="absolute w-full h-full flex justify-center items-center px-4 py-6"
+              >
+                <div className="w-full max-w-md current-affair-card">
+                  <CurrentAffairCard 
+                    article={sortedArticles[currentIndex]} 
+                    onNext={currentIndex < sortedArticles.length - 1 ? () => {
+                      setDirection(-1);
+                      setCurrentIndex(prev => prev + 1);
+                    } : undefined}
+                    fullContent={true}
+                  />
+                </div>
+              </motion.div>
+            )
           )}
         </AnimatePresence>
         

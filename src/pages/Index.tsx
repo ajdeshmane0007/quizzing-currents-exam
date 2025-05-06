@@ -55,7 +55,12 @@ const Index = () => {
               </span>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => navigate('/login')} className="text-white border-white hover:bg-white hover:text-purple-700">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => navigate('/login')} 
+                className="text-white border-white hover:bg-white hover:text-purple-700 bg-gradient-to-r from-purple-500 to-pink-500"
+              >
                 Login
               </Button>
               <Button className="bg-yellow-500 text-purple-900 hover:bg-yellow-400" size="sm" onClick={() => navigate('/register')}>

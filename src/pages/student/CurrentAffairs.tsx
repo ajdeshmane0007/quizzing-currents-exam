@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
@@ -210,14 +209,8 @@ const CurrentAffairs: React.FC = () => {
       </div>
       
       <div className="relative">
-        {/* Floating Quiz Button */}
-        <motion.div
-          className="fixed right-4 z-20"
-          style={{ top: "30%" }}
-          variants={floatingButtonVariants}
-          initial="initial"
-          animate="animate"
-        >
+        {/* Fixed Quiz Button in right corner */}
+        <div className="fixed right-4 bottom-20 z-50">
           <Button 
             asChild
             size="lg"
@@ -229,7 +222,7 @@ const CurrentAffairs: React.FC = () => {
               <span className="ml-2">Take a Quiz</span>
             </Link>
           </Button>
-        </motion.div>
+        </div>
         
         {/* TikTok-style swipeable interface */}
         <div className="relative h-[600px] bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg shadow-md overflow-hidden" ref={containerRef}>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,9 +5,10 @@ import { useApp } from '@/contexts/AppContext';
 import { Book, User, FileText, Calendar, Brain, Award, CheckCircle, Sparkles, Star, ChevronDown, Lightbulb, ArrowRight, Clock, Shield, Trophy, BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import CurrentAffairCard from '@/components/common/CurrentAffairCard';
 
 const Index = () => {
-  const { isAuthenticated, currentUser } = useApp();
+  const { isAuthenticated, currentUser, currentAffairs } = useApp();
   const navigate = useNavigate();
   
   // If authenticated, redirect to appropriate dashboard
@@ -21,6 +21,11 @@ const Index = () => {
       }
     }
   }, [isAuthenticated, currentUser, navigate]);
+
+  // Get recent current affairs
+  const recentCurrentAffairs = [...currentAffairs]
+    .sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime())
+    .slice(0, 6);
 
   // Animation variants
   const containerVariants = {
@@ -177,6 +182,51 @@ const Index = () => {
               </div>
             </div>
           </motion.section>
+
+          {/* Current Affairs Section */}
+          <section className="py-8 px-4 bg-gradient-to-r from-green-50 to-teal-50">
+            <h2 className="text-2xl font-bold text-center mb-6 text-teal-800">Latest News</h2>
+            
+            {recentCurrentAffairs.length > 0 ? (
+              <Carousel
+                opts={{ 
+                  align: "start",
+                  loop: true
+                }}
+                className="w-full"
+              >
+                <CarouselContent>
+                  {recentCurrentAffairs.map((article) => (
+                    <CarouselItem key={article.id} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                      <div className="p-1">
+                        <CurrentAffairCard 
+                          article={article} 
+                          isPremium={article.isPremium}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <div className="flex justify-center mt-4 gap-2">
+                  <CarouselPrevious className="static translate-y-0 h-8 w-8" />
+                  <CarouselNext className="static translate-y-0 h-8 w-8" />
+                </div>
+              </Carousel>
+            ) : (
+              <p className="text-center text-teal-600">No current affairs available</p>
+            )}
+            
+            <div className="text-center mt-6">
+              <Button 
+                variant="gradient" 
+                className="bg-gradient-to-r from-teal-500 to-emerald-500"
+                onClick={() => navigate('/current-affairs')}
+              >
+                <Lightbulb className="mr-2 h-5 w-5" />
+                View All News
+              </Button>
+            </div>
+          </section>
 
           {/* How It Works */}
           <section className="py-8 px-4 bg-gradient-to-r from-indigo-50 to-purple-50">

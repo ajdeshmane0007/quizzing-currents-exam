@@ -3,8 +3,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
-import { Book, User, FileText, Calendar, Brain, Award, CheckCircle, Sparkles, Star, ChevronDown, Lightbulb, ArrowRight, Clock, Shield, Trophy, BarChart3 } from 'lucide-react';
+import { Book, User, FileText, Calendar, Brain, Award, CheckCircle, Sparkles, Star, ChevronDown, Lightbulb, ArrowRight, Clock, Shield, Trophy, BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Index = () => {
   const { isAuthenticated, currentUser } = useApp();
@@ -43,6 +44,40 @@ const Index = () => {
     }
   };
 
+  // Feature cards data for the slider
+  const features = [
+    {
+      title: "Interactive Quizzes",
+      description: "Test your knowledge with our diverse collection of interactive quizzes across various subjects.",
+      icon: Book,
+      color: "purple"
+    },
+    {
+      title: "Current Affairs",
+      description: "Stay updated with the latest news and developments with our TikTok-style swipeable news feed.",
+      icon: FileText,
+      color: "pink"
+    },
+    {
+      title: "Scheduled Exams",
+      description: "Prepare for and take timed examinations to assess your knowledge and progress.",
+      icon: Calendar,
+      color: "blue"
+    },
+    {
+      title: "Progress Tracking",
+      description: "Monitor your learning journey with detailed analytics and visualizations.",
+      icon: BarChart3,
+      color: "green"
+    },
+    {
+      title: "Earn Rewards",
+      description: "Collect badges, points and achievements as you progress through your learning journey.",
+      icon: Trophy,
+      color: "amber"
+    }
+  ];
+
   return (
     <div className="flex min-h-screen flex-col items-center bg-gradient-to-b from-indigo-50 via-purple-50 to-pink-50">
       <div className="w-full max-w-md bg-white shadow-xl rounded-lg min-h-screen flex flex-col">
@@ -56,10 +91,10 @@ const Index = () => {
             </div>
             <div className="flex gap-2">
               <Button 
-                variant="outline" 
+                variant="gradient" 
                 size="sm" 
                 onClick={() => navigate('/login')} 
-                className="text-white border-white hover:bg-white hover:text-purple-700 bg-gradient-to-r from-purple-500 to-pink-500"
+                className="text-white"
               >
                 Login
               </Button>
@@ -95,7 +130,7 @@ const Index = () => {
                 <Button size="lg" className="bg-yellow-500 text-purple-900 hover:bg-yellow-400" onClick={() => navigate('/register')}>
                   Get Started
                 </Button>
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/20" onClick={() => navigate('/login')}>
+                <Button size="lg" variant="gradient" onClick={() => navigate('/login')}>
                   Login
                 </Button>
               </motion.div>
@@ -189,40 +224,37 @@ const Index = () => {
             </div>
           </section>
 
-          {/* Features */}
+          {/* Features Carousel */}
           <section className="py-8 px-4">
             <h2 className="text-2xl font-bold text-center mb-8 text-purple-800">Key Features</h2>
-            <div className="space-y-6">
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-100 p-5 rounded-xl shadow-md hover:shadow-lg transition-all border border-purple-200">
-                <div className="bg-purple-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4 mx-auto transform hover:rotate-12 transition-transform">
-                  <Book className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-3 text-center text-purple-800">Interactive Quizzes</h3>
-                <p className="text-purple-700 text-sm">
-                  Test your knowledge with our diverse collection of interactive quizzes across various subjects with beautiful animations and rewards.
-                </p>
+            
+            <Carousel
+              opts={{ 
+                align: "start",
+                loop: true
+              }}
+              className="w-full"
+            >
+              <CarouselContent>
+                {features.map((feature, index) => (
+                  <CarouselItem key={index} className="md:basis-1/1">
+                    <div className={`bg-gradient-to-br from-${feature.color}-50 to-${feature.color}-100 p-5 rounded-xl shadow-md hover:shadow-lg transition-all border border-${feature.color}-200`}>
+                      <div className={`bg-${feature.color}-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4 mx-auto transform hover:rotate-12 transition-transform`}>
+                        <feature.icon className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className={`text-lg font-semibold mb-3 text-center text-${feature.color}-800`}>{feature.title}</h3>
+                      <p className={`text-${feature.color}-700 text-sm`}>
+                        {feature.description}
+                      </p>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center mt-4 gap-2">
+                <CarouselPrevious className="static translate-y-0 h-8 w-8" />
+                <CarouselNext className="static translate-y-0 h-8 w-8" />
               </div>
-              
-              <div className="bg-gradient-to-br from-pink-50 to-red-100 p-5 rounded-xl shadow-md hover:shadow-lg transition-all border border-pink-200">
-                <div className="bg-pink-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4 mx-auto transform hover:rotate-12 transition-transform">
-                  <FileText className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-3 text-center text-pink-800">Current Affairs</h3>
-                <p className="text-pink-700 text-sm">
-                  Stay updated with the latest news and developments from around the world with our TikTok-style swipeable current affairs section.
-                </p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-5 rounded-xl shadow-md hover:shadow-lg transition-all border border-blue-200">
-                <div className="bg-blue-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4 mx-auto transform hover:rotate-12 transition-transform">
-                  <Calendar className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-lg font-semibold mb-3 text-center text-blue-800">Scheduled Exams</h3>
-                <p className="text-blue-700 text-sm">
-                  Prepare for and take timed examinations to assess your knowledge and progress toward your academic goals.
-                </p>
-              </div>
-            </div>
+            </Carousel>
           </section>
 
           {/* CTA */}

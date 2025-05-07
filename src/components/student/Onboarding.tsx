@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useApp } from '@/contexts/AppContext';
 import { BookOpen, Target, Award, ChevronRight, ChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const OnboardingStep1 = ({ onNext }: { onNext: () => void }) => (
   <div className="text-center flex flex-col items-center">
@@ -102,10 +103,11 @@ const OnboardingStep4 = ({ onComplete, onBack }: { onComplete: () => void; onBac
 const Onboarding: React.FC = () => {
   const { currentUser } = useApp();
   const [step, setStep] = useState(1);
+  const navigate = useNavigate();
   
   const handleComplete = () => {
     localStorage.setItem('onboardingCompleted', 'true');
-    window.location.reload();
+    navigate('/dashboard');
   };
   
   return (

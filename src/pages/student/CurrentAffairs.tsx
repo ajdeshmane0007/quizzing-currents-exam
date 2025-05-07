@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
@@ -19,6 +20,7 @@ const CurrentAffairs: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [viewMode, setViewMode] = useState<'card' | 'full'>('card');
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Extract unique categories
@@ -197,7 +199,7 @@ const CurrentAffairs: React.FC = () => {
         )}
       </AnimatePresence>
       
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-between items-center mb-4">
         <Button 
           variant="outline" 
           onClick={() => setIsSearchVisible(!isSearchVisible)}
@@ -206,6 +208,25 @@ const CurrentAffairs: React.FC = () => {
           {isSearchVisible ? "Hide Filters" : "Search & Filter"}
           <ChevronUp className={`h-4 w-4 transition-transform ${isSearchVisible ? "rotate-180" : ""}`} />
         </Button>
+        
+        <div className="flex gap-2">
+          <Button 
+            variant={viewMode === 'card' ? 'default' : 'outline'} 
+            onClick={() => setViewMode('card')}
+            className="rounded-l-full rounded-r-none"
+            size="sm"
+          >
+            Card View
+          </Button>
+          <Button 
+            variant={viewMode === 'full' ? 'default' : 'outline'} 
+            onClick={() => setViewMode('full')}
+            className="rounded-r-full rounded-l-none"
+            size="sm"
+          >
+            Full View
+          </Button>
+        </div>
       </div>
       
       <div className="relative">
@@ -224,93 +245,108 @@ const CurrentAffairs: React.FC = () => {
           </Button>
         </div>
         
-        {/* TikTok-style swipeable interface */}
-        <div className="relative h-[600px] bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg shadow-md overflow-hidden" ref={containerRef}>
-          <div className="absolute left-4 top-4 z-10 text-xs bg-black/60 text-white px-2 py-1 rounded-full">
-            {isAllArticlesViewed ? 'End' : `${currentIndex + 1}/${sortedArticles.length}`}
-          </div>
-          
-          <AnimatePresence custom={direction}>
-            {isAllArticlesViewed ? (
-              <motion.div
-                key="end-card"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="absolute w-full h-full flex justify-center items-center px-4 py-6"
-              >
-                <div className="w-full max-w-md">
-                  <Card className="border-2 border-purple-200 shadow-lg">
-                    <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
-                      <CardTitle className="text-center flex items-center justify-center">
-                        <Lightbulb className="h-5 w-5 mr-2" />
-                        You're All Caught Up!
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6 text-center">
-                      <div className="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <BookOpen className="h-10 w-10 text-purple-600" />
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2">Ready to test your knowledge?</h3>
-                      <p className="text-gray-600 mb-4">Now that you're up to date with current affairs, test your understanding with our quizzes.</p>
-                    </CardContent>
-                    <CardFooter className="flex justify-center pb-6 gap-3">
-                      <Button asChild className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
-                        <Link to="/quizzes">Try a Quiz</Link>
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={() => setCurrentIndex(0)}
-                      >
-                        Start Over
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </div>
-              </motion.div>
-            ) : (
-              sortedArticles[currentIndex] && (
+        {viewMode === 'card' ? (
+          /* TikTok-style swipeable interface */
+          <div className="relative h-[600px] bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg shadow-md overflow-hidden" ref={containerRef}>
+            <div className="absolute left-4 top-4 z-10 text-xs bg-black/60 text-white px-2 py-1 rounded-full">
+              {isAllArticlesViewed ? 'End' : `${currentIndex + 1}/${sortedArticles.length}`}
+            </div>
+            
+            <AnimatePresence custom={direction}>
+              {isAllArticlesViewed ? (
                 <motion.div
-                  key={sortedArticles[currentIndex].id}
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    y: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.2 }
-                  }}
-                  drag="y"
-                  dragConstraints={{ top: 0, bottom: 0 }}
-                  dragElastic={1}
-                  onDragEnd={handleDragEnd}
+                  key="end-card"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
                   className="absolute w-full h-full flex justify-center items-center px-4 py-6"
                 >
-                  <div className="w-full max-w-md current-affair-card">
-                    <CurrentAffairCard 
-                      article={sortedArticles[currentIndex]} 
-                      onNext={currentIndex < sortedArticles.length - 1 ? () => {
-                        setDirection(-1);
-                        setCurrentIndex(prev => prev + 1);
-                      } : undefined}
-                      fullContent={true}
-                    />
+                  <div className="w-full max-w-md">
+                    <Card className="border-2 border-purple-200 shadow-lg">
+                      <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                        <CardTitle className="text-center flex items-center justify-center">
+                          <Lightbulb className="h-5 w-5 mr-2" />
+                          You're All Caught Up!
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-6 text-center">
+                        <div className="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                          <BookOpen className="h-10 w-10 text-purple-600" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">Ready to test your knowledge?</h3>
+                        <p className="text-gray-600 mb-4">Now that you're up to date with current affairs, test your understanding with our quizzes.</p>
+                      </CardContent>
+                      <CardFooter className="flex justify-center pb-6 gap-3">
+                        <Button asChild className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+                          <Link to="/quizzes">Try a Quiz</Link>
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          onClick={() => setCurrentIndex(0)}
+                        >
+                          Start Over
+                        </Button>
+                      </CardFooter>
+                    </Card>
                   </div>
                 </motion.div>
-              )
-            )}
-          </AnimatePresence>
-          
-          {/* Swipe instruction */}
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-            <div className="bg-black/60 text-white text-xs rounded-full px-3 py-1 flex items-center gap-1">
-              <span>Swipe</span>
-              <ChevronUp className="h-3 w-3" />
-              <span>to navigate</span>
+              ) : (
+                sortedArticles[currentIndex] && (
+                  <motion.div
+                    key={sortedArticles[currentIndex].id}
+                    custom={direction}
+                    variants={variants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                      y: { type: "spring", stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.2 }
+                    }}
+                    drag="y"
+                    dragConstraints={{ top: 0, bottom: 0 }}
+                    dragElastic={1}
+                    onDragEnd={handleDragEnd}
+                    className="absolute w-full h-full flex justify-center items-center px-4 py-6"
+                  >
+                    <div className="w-full max-w-md current-affair-card">
+                      <CurrentAffairCard 
+                        article={sortedArticles[currentIndex]} 
+                        onNext={currentIndex < sortedArticles.length - 1 ? () => {
+                          setDirection(-1);
+                          setCurrentIndex(prev => prev + 1);
+                        } : undefined}
+                        fullContent={true}
+                      />
+                    </div>
+                  </motion.div>
+                )
+              )}
+            </AnimatePresence>
+            
+            {/* Swipe instruction */}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+              <div className="bg-black/60 text-white text-xs rounded-full px-3 py-1 flex items-center gap-1">
+                <span>Swipe</span>
+                <ChevronUp className="h-3 w-3" />
+                <span>to navigate</span>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          /* Full view with list of cards */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-24">
+            {sortedArticles.map((article) => (
+              <div key={article.id} className="current-affair-card">
+                <CurrentAffairCard 
+                  article={article} 
+                  isPremium={article.isPremium}
+                  fullContent={true}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </MainLayout>
   );

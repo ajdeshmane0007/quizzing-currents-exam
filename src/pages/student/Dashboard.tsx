@@ -1,4 +1,3 @@
-
 import React, { useMemo, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -13,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight, BookOpen, Target, Award, Smile, Sparkles, Lightbulb } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const Dashboard: React.FC = () => {
   const { currentUser, quizzes, exams, currentAffairs, results } = useApp();
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
   // Get most recent quizzes, exams, and current affairs
   const recentQuizzes = [...quizzes].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, isMobile ? 2 : 4);
   const upcomingExams = exams.filter(exam => new Date() <= exam.endDate).slice(0, 2);
-  const recentCurrentAffairs = [...currentAffairs].sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()).slice(0, 2);
+  const recentCurrentAffairs = [...currentAffairs].sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()).slice(0, 6);
 
   if (showOnboarding) {
     return <Onboarding />;
@@ -225,20 +225,36 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           <div className="p-4">
-            <div className="grid gap-4">
-              {recentCurrentAffairs.slice(0, 1).map((article, index) => (
-                <CurrentAffairCard 
-                  key={article.id} 
-                  article={article} 
-                  onNext={index < recentCurrentAffairs.length - 1 ? () => {} : undefined}
-                />
-              ))}
-              {recentCurrentAffairs.length === 0 && (
-                <div className="text-center py-6 text-gray-500">
-                  No current affairs available
-                </div>
-              )}
-            </div>
+            <Carousel
+              opts={{ 
+                align: "start",
+                loop: true
+              }}
+              className="w-full"
+            >
+              <CarouselContent>
+                {recentCurrentAffairs.map((article) => (
+                  <CarouselItem key={article.id} className="md:basis-1/2 lg:basis-1/3 pl-4">
+                    <div className="p-1">
+                      <CurrentAffairCard 
+                        article={article} 
+                        isPremium={article.isPremium}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center mt-4 gap-2">
+                <CarouselPrevious className="static translate-y-0 h-8 w-8" />
+                <CarouselNext className="static translate-y-0 h-8 w-8" />
+              </div>
+            </Carousel>
+            
+            {recentCurrentAffairs.length === 0 && (
+              <div className="text-center py-6 text-gray-500">
+                No current affairs available
+              </div>
+            )}
           </div>
         </div>
       </div>

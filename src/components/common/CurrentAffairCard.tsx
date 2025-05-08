@@ -26,15 +26,15 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, 
   }).format(article.publishedDate);
 
   return (
-    <Card className={`overflow-hidden h-full border border-purple-100 hover:shadow-md transition-all ${fullContent ? 'flex flex-col' : ''}`}>
+    <Card className="overflow-hidden h-full border border-purple-100 hover:shadow-lg transition-all flex flex-col bg-white/90 backdrop-blur-sm">
       {article.imageUrl && (
-        <div className={`relative ${fullContent ? 'h-56' : 'h-40'} w-full overflow-hidden`}>
+        <div className="relative h-56 w-full overflow-hidden">
           <img
             src={article.imageUrl}
             alt={article.title}
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            className="h-full w-full object-cover"
           />
-          {isPremium && (
+          {article.isPremium && (
             <div className="absolute top-2 right-2">
               <Badge variant="secondary" className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black">
                 <Shield className="h-3 w-3 mr-1" /> Premium
@@ -43,10 +43,10 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, 
           )}
         </div>
       )}
-      <CardHeader className={`py-3 ${fullContent ? 'flex-shrink-0' : ''} border-b border-purple-50`}>
+      <CardHeader className="py-3 flex-shrink-0 border-b border-purple-50 bg-white">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className={`${fullContent ? 'text-xl' : 'text-lg'} font-semibold text-purple-900 line-clamp-2`}>
+            <CardTitle className="text-xl font-semibold text-purple-900 line-clamp-2">
               {article.title}
             </CardTitle>
             <CardDescription className="flex items-center mt-1 text-gray-500">
@@ -57,12 +57,12 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, 
         </div>
       </CardHeader>
       
-      <CardContent className={`py-3 ${fullContent ? 'flex-grow overflow-auto' : ''}`}>
-        <p className={`text-gray-600 ${fullContent ? '' : 'line-clamp-3'}`}>
+      <CardContent className="py-4 flex-grow overflow-auto">
+        <p className="text-gray-600">
           {article.content}
         </p>
         
-        {fullContent && article.tags.length > 0 && (
+        {article.tags.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
             {article.tags.map((tag) => (
               <Badge key={tag} variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100">
@@ -71,63 +71,41 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, 
             ))}
           </div>
         )}
-        
-        {!fullContent && article.tags.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {article.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
-                {tag}
-              </Badge>
-            ))}
-            {article.tags.length > 3 && (
-              <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
-                +{article.tags.length - 3}
-              </Badge>
-            )}
-          </div>
-        )}
       </CardContent>
       
-      <CardFooter className={`pt-2 pb-3 ${fullContent ? 'flex-shrink-0' : ''} ${fullContent ? 'bg-purple-50/50' : 'bg-white'}`}>
-        {!fullContent ? (
-          <div className="w-full flex justify-between items-center">
-            <Button asChild variant="default" className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
-              <Link to={`/current-affairs/${article.id}`} className="flex items-center">
-                <span>Read</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+      <CardFooter className="flex-shrink-0 bg-purple-50/50 pt-2 pb-3">
+        <div className="w-full space-y-2">
+          <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+            <Link to={`/current-affairs/${article.id}`} className="flex items-center justify-center">
+              <Eye className="mr-2 h-4 w-4" />
+              <span>View Full Article</span>
+            </Link>
+          </Button>
+          
+          <div className="flex w-full justify-between">
+            <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
+              <BookmarkPlus className="h-4 w-4 mr-1 text-purple-600" />
+              <span className="text-sm">Save</span>
             </Button>
             
-            <div className="flex gap-2">
-              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                <BookmarkPlus className="h-4 w-4 text-purple-600" />
-              </Button>
-              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
-                <Share2 className="h-4 w-4 text-purple-600" />
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="w-full space-y-2">
-            <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
-              <Link to={`/current-affairs/${article.id}`} className="flex items-center justify-center">
-                <Eye className="mr-2 h-4 w-4" />
-                <span>View Full Article</span>
-              </Link>
+            <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
+              <Share2 className="h-4 w-4 mr-1 text-purple-600" />
+              <span className="text-sm">Share</span>
             </Button>
+            
             {onNext && (
               <Button 
                 onClick={onNext} 
-                className="w-full flex justify-center items-center gap-2" 
-                variant="outline"
+                variant="ghost"
                 size="sm"
+                className="flex-1 flex items-center justify-center text-indigo-700"
               >
-                <span>Next Article</span>
-                <ChevronUp className="h-4 w-4 rotate-180" />
+                <span className="text-sm">Next</span>
+                <ChevronUp className="h-4 w-4 ml-1 rotate-180" />
               </Button>
             )}
           </div>
-        )}
+        </div>
       </CardFooter>
     </Card>
   );

@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 const CurrentAffairs: React.FC = () => {
   const { currentAffairs } = useApp();
@@ -21,8 +20,6 @@ const CurrentAffairs: React.FC = () => {
   const isMobile = useIsMobile();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [viewMode, setViewMode] = useState<'card' | 'full' | 'immersive'>('full');
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Extract unique categories
@@ -211,32 +208,6 @@ const CurrentAffairs: React.FC = () => {
         </div>
       </div>
       
-      {/* View mode tabs */}
-      <div className="mb-6">
-        <Tabs defaultValue="full" value={viewMode} onValueChange={(value) => setViewMode(value as 'card' | 'full' | 'immersive')} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-purple-50 rounded-lg border border-purple-100">
-            <TabsTrigger value="full" className="data-[state=active]:bg-white data-[state=active]:text-purple-700">
-              <div className="flex items-center">
-                <Newspaper className="h-4 w-4 mr-2" />
-                <span>Full View</span>
-              </div>
-            </TabsTrigger>
-            <TabsTrigger value="card" className="data-[state=active]:bg-white data-[state=active]:text-purple-700">
-              <div className="flex items-center">
-                <Card className="h-4 w-4 mr-2" />
-                <span>Grid View</span>
-              </div>
-            </TabsTrigger>
-            <TabsTrigger value="immersive" className="data-[state=active]:bg-white data-[state=active]:text-purple-700">
-              <div className="flex items-center">
-                <Lightbulb className="h-4 w-4 mr-2" />
-                <span>Immersive</span>
-              </div>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-      
       {/* Fixed Quiz Button in right corner */}
       <div className="fixed right-4 bottom-20 z-50">
         <Button 
@@ -251,180 +222,144 @@ const CurrentAffairs: React.FC = () => {
         </Button>
       </div>
       
-      {viewMode === 'immersive' ? (
-        /* TikTok-style swipeable interface */
-        <div className="relative h-[600px] bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg shadow-md overflow-hidden" ref={containerRef}>
-          <div className="absolute left-4 top-4 z-10 text-xs bg-black/60 text-white px-2 py-1 rounded-full">
+      {/* Enhanced TikTok-style interface */}
+      <div className="relative h-[calc(100vh-240px)] sm:h-[600px] bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg shadow-md overflow-hidden" ref={containerRef}>
+        {/* Progress bar */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gray-200 z-10">
+          <div 
+            className="h-full bg-purple-500 transition-all duration-300"
+            style={{ width: `${((currentIndex + 1) / sortedArticles.length) * 100}%` }}
+          />
+        </div>
+        
+        <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
+          <div className="text-xs bg-black/60 text-white px-2 py-1 rounded-full">
             {isAllArticlesViewed ? 'End' : `${currentIndex + 1}/${sortedArticles.length}`}
           </div>
           
-          <AnimatePresence custom={direction}>
-            {isAllArticlesViewed ? (
+          {!isAllArticlesViewed && sortedArticles[currentIndex]?.isPremium && (
+            <Badge className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black">
+              <Shield className="h-3 w-3 mr-1" /> Premium
+            </Badge>
+          )}
+        </div>
+        
+        <AnimatePresence custom={direction}>
+          {isAllArticlesViewed ? (
+            <motion.div
+              key="end-card"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute w-full h-full flex justify-center items-center px-4 py-6"
+            >
+              <div className="w-full max-w-md">
+                <Card className="border-2 border-purple-200 shadow-lg">
+                  <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                    <CardTitle className="text-center flex items-center justify-center">
+                      <Lightbulb className="h-5 w-5 mr-2" />
+                      You're All Caught Up!
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6 text-center">
+                    <div className="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                      <BookOpen className="h-10 w-10 text-purple-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Ready to test your knowledge?</h3>
+                    <p className="text-gray-600 mb-4">Now that you're up to date with current affairs, test your understanding with our quizzes.</p>
+                  </CardContent>
+                  <CardFooter className="flex justify-center pb-6 gap-3">
+                    <Button asChild className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+                      <Link to="/quizzes">Try a Quiz</Link>
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => setCurrentIndex(0)}
+                    >
+                      Start Over
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            </motion.div>
+          ) : (
+            sortedArticles[currentIndex] && (
               <motion.div
-                key="end-card"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="absolute w-full h-full flex justify-center items-center px-4 py-6"
+                key={sortedArticles[currentIndex].id}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  y: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 }
+                }}
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={0.8}
+                onDragEnd={handleDragEnd}
+                className="absolute w-full h-full flex justify-center items-center px-4 py-10"
               >
-                <div className="w-full max-w-md">
-                  <Card className="border-2 border-purple-200 shadow-lg">
-                    <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
-                      <CardTitle className="text-center flex items-center justify-center">
-                        <Lightbulb className="h-5 w-5 mr-2" />
-                        You're All Caught Up!
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6 text-center">
-                      <div className="bg-purple-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                        <BookOpen className="h-10 w-10 text-purple-600" />
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2">Ready to test your knowledge?</h3>
-                      <p className="text-gray-600 mb-4">Now that you're up to date with current affairs, test your understanding with our quizzes.</p>
-                    </CardContent>
-                    <CardFooter className="flex justify-center pb-6 gap-3">
-                      <Button asChild className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
-                        <Link to="/quizzes">Try a Quiz</Link>
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={() => setCurrentIndex(0)}
-                      >
-                        Start Over
-                      </Button>
-                    </CardFooter>
-                  </Card>
+                <div className="w-full max-w-md current-affair-card">
+                  <CurrentAffairCard 
+                    article={sortedArticles[currentIndex]} 
+                    onNext={currentIndex < sortedArticles.length - 1 ? () => {
+                      setDirection(-1);
+                      setCurrentIndex(prev => prev + 1);
+                    } : undefined}
+                    fullContent={true}
+                  />
                 </div>
               </motion.div>
-            ) : (
-              sortedArticles[currentIndex] && (
-                <motion.div
-                  key={sortedArticles[currentIndex].id}
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    y: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.2 }
-                  }}
-                  drag="y"
-                  dragConstraints={{ top: 0, bottom: 0 }}
-                  dragElastic={1}
-                  onDragEnd={handleDragEnd}
-                  className="absolute w-full h-full flex justify-center items-center px-4 py-6"
-                >
-                  <div className="w-full max-w-md current-affair-card">
-                    <CurrentAffairCard 
-                      article={sortedArticles[currentIndex]} 
-                      onNext={currentIndex < sortedArticles.length - 1 ? () => {
-                        setDirection(-1);
-                        setCurrentIndex(prev => prev + 1);
-                      } : undefined}
-                      fullContent={true}
-                    />
-                  </div>
-                </motion.div>
-              )
-            )}
-          </AnimatePresence>
-          
-          {/* Swipe instruction */}
-          <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-            <div className="bg-black/60 text-white text-xs rounded-full px-3 py-1 flex items-center gap-1">
-              <span>Swipe</span>
-              <ChevronUp className="h-3 w-3" />
-              <span>to navigate</span>
-            </div>
+            )
+          )}
+        </AnimatePresence>
+        
+        {/* Swipe instruction */}
+        <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center justify-center gap-2">
+          <div className="flex flex-col items-center animate-pulse">
+            <ChevronUp className="h-5 w-5 text-purple-600 -mb-1" />
+            <ChevronUp className="h-6 w-6 text-purple-600" />
+          </div>
+          <div className="bg-black/60 text-white text-xs rounded-full px-3 py-1 flex items-center gap-1">
+            <span>Swipe to navigate</span>
           </div>
         </div>
-      ) : viewMode === 'card' ? (
-        /* Card grid view */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-24">
-          {sortedArticles.map((article) => (
-            <motion.div 
-              key={article.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="h-full"
-            >
-              <CurrentAffairCard 
-                article={article} 
-                isPremium={article.isPremium}
-                fullContent={false}
-              />
-            </motion.div>
-          ))}
-        </div>
-      ) : (
-        /* Full list view with enhanced cards */
-        <div className="space-y-6 pb-24">
-          {sortedArticles.map((article, index) => (
-            <motion.div
-              key={article.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <Card className="overflow-hidden border-purple-100 hover:border-purple-300 transition-all hover:shadow-md">
-                <div className="grid md:grid-cols-3 gap-4">
-                  {article.imageUrl && (
-                    <div className="md:col-span-1 h-48 md:h-full relative">
-                      <img 
-                        src={article.imageUrl} 
-                        alt={article.title} 
-                        className="h-full w-full object-cover" 
-                      />
-                      {article.isPremium && (
-                        <div className="absolute top-2 right-2">
-                          <Badge className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black">
-                            <Shield className="h-3 w-3 mr-1" /> Premium
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  <div className={`p-5 ${article.imageUrl ? 'md:col-span-2' : 'md:col-span-3'}`}>
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h3 className="text-lg md:text-xl font-semibold text-purple-900">{article.title}</h3>
-                        <div className="flex items-center text-gray-500 text-sm mt-1">
-                          <Calendar className="h-3.5 w-3.5 mr-1" /> 
-                          {new Intl.DateTimeFormat('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          }).format(article.publishedDate)}
-                        </div>
-                      </div>
-                      <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">{article.category}</Badge>
-                    </div>
-                    
-                    <p className="text-gray-600 mb-4 line-clamp-3">{article.content}</p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {article.tags.map(tag => (
-                        <Badge key={tag} variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                    
-                    <Button asChild className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
-                      <Link to={`/current-affairs/${article.id}`}>
-                        Read Full Article
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      )}
+        
+        {/* Side navigation buttons for desktop */}
+        {!isMobile && (
+          <>
+            {currentIndex > 0 && (
+              <Button 
+                variant="outline" 
+                size="icon"
+                className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-white/80 hover:bg-white shadow-md h-10 w-10"
+                onClick={() => {
+                  setDirection(1);
+                  setCurrentIndex(prev => prev - 1);
+                }}
+              >
+                <ChevronUp className="h-6 w-6 rotate-180" />
+              </Button>
+            )}
+            
+            {currentIndex < sortedArticles.length - 1 && (
+              <Button 
+                variant="outline"
+                size="icon" 
+                className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-white/80 hover:bg-white shadow-md h-10 w-10"
+                onClick={() => {
+                  setDirection(-1);
+                  setCurrentIndex(prev => prev + 1);
+                }}
+              >
+                <ChevronUp className="h-6 w-6" />
+              </Button>
+            )}
+          </>
+        )}
+      </div>
     </MainLayout>
   );
 };

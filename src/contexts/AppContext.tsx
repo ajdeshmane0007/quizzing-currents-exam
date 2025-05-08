@@ -31,10 +31,12 @@ interface AppContextType {
   mockUsers: User[];
   classes: Class[]; // Add classes property
   
-  // Admin functions
+  // Quiz management
   createQuiz: (quiz: Omit<Quiz, 'id' | 'createdAt'>) => void;
   updateQuiz: (quiz: Quiz) => void;
   deleteQuiz: (id: string) => void;
+  
+  // Admin functions
   createCurrentAffair: (affair: Omit<CurrentAffair, 'id' | 'publishedDate'>) => void;
   updateCurrentAffair: (affair: CurrentAffair) => void;
   deleteCurrentAffair: (id: string) => void;
@@ -160,15 +162,35 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       id: `quiz-${Date.now()}`,
       createdAt: new Date(),
     };
+    console.log("Creating new quiz:", newQuiz);
     setQuizzes([...quizzes, newQuiz]);
+    
+    toast({
+      title: "Quiz Created",
+      description: `${newQuiz.title} has been created successfully.`
+    });
   };
   
   const updateQuiz = (quiz: Quiz) => {
+    console.log("Updating quiz:", quiz);
     setQuizzes(quizzes.map(q => q.id === quiz.id ? quiz : q));
+    
+    toast({
+      title: "Quiz Updated",
+      description: `${quiz.title} has been updated successfully.`
+    });
   };
   
   const deleteQuiz = (id: string) => {
-    setQuizzes(quizzes.filter(q => q.id !== id));
+    const quizToDelete = quizzes.find(q => q.id === id);
+    if (quizToDelete) {
+      setQuizzes(quizzes.filter(q => q.id !== id));
+      
+      toast({
+        title: "Quiz Deleted",
+        description: `${quizToDelete.title} has been deleted successfully.`
+      });
+    }
   };
   
   const createCurrentAffair = (affair: Omit<CurrentAffair, 'id' | 'publishedDate'>) => {

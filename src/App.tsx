@@ -25,10 +25,13 @@ import Profile from "./pages/student/Profile";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminQuizzes from "./pages/admin/Quizzes";
+import QuizForm from "./pages/admin/QuizForm";
+import QuizImport from "./pages/admin/QuizImport";
 import AdminCurrentAffairs from "./pages/admin/CurrentAffairs";
 import AdminCurrentAffairForm from "./pages/admin/CurrentAffairForm";
 import AdminUpcomingExams from "./pages/admin/UpcomingExams";
-import ExamForm from "./pages/admin/ExamForm"; // Added import for ExamForm
+import ExamForm from "./pages/admin/ExamForm";
 import ClassManagement from "./pages/admin/ClassManagement";
 import SubjectManagement from "./pages/admin/SubjectManagement";
 import TokenRecharge from "./pages/admin/TokenRecharge";
@@ -81,6 +84,12 @@ const App = () => (
               {/* Class & Subject Management */}
               <Route path="/admin/classes" element={<ClassManagement />} />
               <Route path="/admin/subjects" element={<SubjectManagement />} />
+              
+              {/* Quiz Management */}
+              <Route path="/admin/quizzes" element={<AdminQuizzes />} />
+              <Route path="/admin/quizzes/new" element={<QuizForm />} />
+              <Route path="/admin/quizzes/edit/:id" element={<QuizForm />} />
+              <Route path="/admin/quizzes/import" element={<QuizImport />} />
               
               {/* Token Management */}
               <Route path="/admin/tokens" element={<TokenRecharge />} />

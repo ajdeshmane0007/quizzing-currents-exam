@@ -5,7 +5,7 @@ import MainLayout from '@/layouts/MainLayout';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileSearch, Newspaper, Tag, ChevronUp, Lightbulb, BookOpen, Brain, Search, Filter, X, Calendar, RefreshCcw } from 'lucide-react';
+import { FileSearch, Newspaper, Tag, ChevronUp, Lightbulb, BookOpen, Brain, Search, Filter, X, Calendar, RefreshCcw, Shield } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';

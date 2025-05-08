@@ -1,18 +1,20 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import MainLayout from '@/layouts/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, Calendar, Tag, BookOpen } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, Tag, BookOpen, ChevronUp, ChevronDown } from 'lucide-react';
 import LockContent from '@/components/common/LockContent';
 import TokenDisplay from '@/components/common/TokenDisplay';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const CurrentAffairDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { currentAffairs } = useApp();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // Find current article and its index
   const currentIndex = currentAffairs.findIndex(a => a.id === id);
@@ -21,13 +23,20 @@ const CurrentAffairDetail: React.FC = () => {
   // Determine next and previous articles
   const nextArticle = currentIndex < currentAffairs.length - 1 ? currentAffairs[currentIndex + 1] : null;
   const prevArticle = currentIndex > 0 ? currentAffairs[currentIndex - 1] : null;
+
+  // Ensure redirection to main page if article not found
+  useEffect(() => {
+    if (!article) {
+      console.error("Article not found with ID:", id);
+      navigate('/current-affairs');
+    }
+  }, [article, id, navigate]);
   
   if (!article) {
     return (
       <MainLayout>
         <div className="flex flex-col items-center justify-center py-12">
-          <h2 className="text-xl font-bold">Article not found</h2>
-          <p className="mt-2 text-muted-foreground">The requested article does not exist.</p>
+          <h2 className="text-xl font-bold">Loading article...</h2>
           <Button onClick={() => navigate('/current-affairs')} className="mt-6">
             Back to Current Affairs
           </Button>
@@ -119,8 +128,12 @@ const CurrentAffairDetail: React.FC = () => {
                 onClick={() => goToArticle(prevArticle.id)}
                 className="flex items-center border-teal-200 text-teal-700 hover:bg-teal-50"
               >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Previous
+                {isMobile ? <ChevronDown className="h-5 w-5" /> : (
+                  <>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Previous
+                  </>
+                )}
               </Button>
             ) : <div></div>}
             
@@ -139,8 +152,12 @@ const CurrentAffairDetail: React.FC = () => {
                 onClick={() => goToArticle(nextArticle.id)}
                 className="flex items-center border-teal-200 text-teal-700 hover:bg-teal-50"
               >
-                Next
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {isMobile ? <ChevronUp className="h-5 w-5" /> : (
+                  <>
+                    Next
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
               </Button>
             )}
           </div>

@@ -1,13 +1,15 @@
 
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/contexts/AppContext";
 import PageLayout from "@/components/common/PageLayout";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ArrowLeft } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { currentUser } = useApp();
   const isMobile = useIsMobile();
 
@@ -16,7 +18,18 @@ const NotFound = () => {
       "404 Error: User attempted to access non-existent route:",
       location.pathname
     );
-  }, [location.pathname]);
+
+    // Try to extract ID from URL paths like /current-affairs/123
+    const pathParts = location.pathname.split('/');
+    const isCurrentAffairs = pathParts[1] === 'current-affairs' && pathParts.length > 2;
+    
+    // If this is potentially a current affairs URL, try to redirect to the main page
+    if (isCurrentAffairs) {
+      setTimeout(() => {
+        navigate('/current-affairs');
+      }, 2000);
+    }
+  }, [location.pathname, navigate]);
 
   // Determine where to redirect the user based on their role
   const getHomeLink = () => {
@@ -34,6 +47,17 @@ const NotFound = () => {
             The page you are looking for doesn't exist or has been moved.
           </p>
           <div className="space-y-3">
+            {location.pathname.includes('current-affairs') && (
+              <Button 
+                asChild 
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                <Link to="/current-affairs">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Current Affairs
+                </Link>
+              </Button>
+            )}
             <Button asChild className="w-full">
               <Link to={getHomeLink()}>
                 Go to Dashboard

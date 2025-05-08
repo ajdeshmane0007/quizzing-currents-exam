@@ -6,16 +6,23 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CurrentAffair } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ArrowRight, Shield, Calendar, ChevronUp, Eye, BookmarkPlus, Share2 } from 'lucide-react';
+import { ArrowRight, Shield, Calendar, ChevronUp, ChevronDown, Eye, BookmarkPlus, Share2 } from 'lucide-react';
 
 interface CurrentAffairCardProps {
   article: CurrentAffair;
   onNext?: () => void;
+  onPrevious?: () => void;
   isPremium?: boolean;
   fullContent?: boolean;
 }
 
-const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, isPremium = false, fullContent = false }) => {
+const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ 
+  article, 
+  onNext, 
+  onPrevious,
+  isPremium = false, 
+  fullContent = false 
+}) => {
   const isMobile = useIsMobile();
   
   // Format date
@@ -59,7 +66,7 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, 
       
       <CardContent className="py-4 flex-grow overflow-auto">
         <p className="text-gray-600">
-          {article.content}
+          {fullContent ? article.content : `${article.content.slice(0, 200)}${article.content.length > 200 ? '...' : ''}`}
         </p>
         
         {article.tags.length > 0 && (
@@ -93,17 +100,43 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ article, onNext, 
               <span className="text-sm">Share</span>
             </Button>
             
-            {onNext && (
-              <Button 
-                onClick={onNext} 
-                variant="ghost"
-                size="sm"
-                className="flex-1 flex items-center justify-center text-indigo-700"
-              >
-                <span className="text-sm">Next</span>
-                <ChevronUp className="h-4 w-4 ml-1 rotate-180" />
-              </Button>
-            )}
+            <div className="flex-1 flex">
+              {onPrevious && (
+                <Button 
+                  onClick={onPrevious} 
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 flex items-center justify-center text-indigo-700"
+                >
+                  {isMobile ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <span className="text-sm">Previous</span>
+                      <ChevronDown className="h-4 w-4 ml-1" />
+                    </>
+                  )}
+                </Button>
+              )}
+              
+              {onNext && (
+                <Button 
+                  onClick={onNext} 
+                  variant="ghost"
+                  size="sm"
+                  className="flex-1 flex items-center justify-center text-indigo-700"
+                >
+                  {isMobile ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <>
+                      <span className="text-sm">Next</span>
+                      <ChevronUp className="h-4 w-4 ml-1" />
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </CardFooter>

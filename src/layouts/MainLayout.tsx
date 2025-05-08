@@ -11,22 +11,24 @@ import PageLayout from '@/components/common/PageLayout';
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  fullWidth?: boolean;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = ({ children, fullWidth = false }) => {
   const { isAuthenticated, currentUser } = useApp();
   const isAdmin = currentUser?.role === 'admin';
   const isMobile = useIsMobile();
 
   return (
     <PageLayout
-      containerClassName="md:max-w-5xl lg:max-w-6xl"
+      containerClassName={`${isAdmin && !isMobile ? 'md:max-w-5xl lg:max-w-6xl' : ''}`}
+      fullWidth={fullWidth}
     >
       <Navbar />
       
       {/* Show token display for students in the header area */}
       {isAuthenticated && !isAdmin && (
-        <div className="bg-indigo-50 px-4 py-2 flex justify-end">
+        <div className="bg-indigo-50 px-2 sm:px-4 py-2 flex justify-end">
           <TokenDisplay showAddButton={false} />
         </div>
       )}
@@ -35,7 +37,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         {/* Admin Sidebar (visible only for admin and on non-mobile) */}
         {isAdmin && !isMobile && <AdminSidebar />}
         
-        <div className={`flex-1 px-4 py-3 md:px-6 ${isMobile ? 'pb-20' : ''}`}>
+        <div className={`flex-1 px-2 sm:px-4 md:px-6 py-3 ${isMobile ? 'pb-20' : ''}`}>
           {children}
         </div>
       </div>

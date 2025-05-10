@@ -15,7 +15,7 @@ interface CurrentAffairCardProps {
   isPremium?: boolean;
   fullContent?: boolean;
   isDashboard?: boolean;
-  showMetadataOnly?: boolean; // Added this prop
+  showMetadataOnly?: boolean;
 }
 
 const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ 
@@ -25,7 +25,7 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
   isPremium = false, 
   fullContent = false,
   isDashboard = false,
-  showMetadataOnly = false // Added this prop with default value
+  showMetadataOnly = false
 }) => {
   const isMobile = useIsMobile();
   
@@ -39,7 +39,7 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
   return (
     <Card className="overflow-hidden h-full border border-purple-100 hover:shadow-lg transition-all flex flex-col bg-white/90 backdrop-blur-sm">
       {article.imageUrl && !isDashboard && (
-        <div className="relative h-56 w-full overflow-hidden">
+        <div className="relative h-48 md:h-56 w-full overflow-hidden">
           <img
             src={article.imageUrl}
             alt={article.title}
@@ -107,7 +107,7 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
       {isDashboard ? (
         <CardFooter className="flex-shrink-0 pt-2 pb-3">
           <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-sm h-8">
-            <Link to={`/current-affairs/${article.id}`} className="flex items-center justify-center">
+            <Link to="/current-affairs" state={{ selectedArticleId: article.id }} className="flex items-center justify-center">
               <Eye className="mr-2 h-3 w-3" />
               <span>Read Article</span>
               <ArrowRight className="ml-2 h-3 w-3" />
@@ -117,22 +117,24 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
       ) : (
         <CardFooter className="flex-shrink-0 bg-purple-50/50 pt-2 pb-3">
           <div className="w-full space-y-2">
-            <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
-              <Link to={`/current-affairs/${article.id}`} className="flex items-center justify-center">
-                <Eye className="mr-2 h-4 w-4" />
-                <span>View Full Article</span>
-              </Link>
-            </Button>
+            {!fullContent && (
+              <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+                <span className="flex items-center justify-center">
+                  <Eye className="mr-2 h-4 w-4" />
+                  <span>View Full Content</span>
+                </span>
+              </Button>
+            )}
             
             <div className="flex w-full justify-between">
               <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
                 <BookmarkPlus className="h-4 w-4 mr-1 text-purple-600" />
-                <span className="text-sm">Save</span>
+                <span className="text-sm hidden sm:inline">Save</span>
               </Button>
               
               <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
                 <Share2 className="h-4 w-4 mr-1 text-purple-600" />
-                <span className="text-sm">Share</span>
+                <span className="text-sm hidden sm:inline">Share</span>
               </Button>
               
               <div className="flex-1 flex">

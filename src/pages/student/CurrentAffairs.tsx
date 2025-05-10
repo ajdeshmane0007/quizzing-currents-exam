@@ -1,6 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '@/contexts/AppContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MainLayout from '@/layouts/MainLayout';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,8 @@ const CurrentAffairs: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
   
   // Extract unique categories
   const categories = Array.from(
@@ -43,6 +46,18 @@ const CurrentAffairs: React.FC = () => {
   const sortedArticles = [...filteredArticles].sort(
     (a, b) => b.publishedDate.getTime() - a.publishedDate.getTime()
   );
+
+  // Check if we have a selected article from state
+  useEffect(() => {
+    if (location.state?.selectedArticleId) {
+      const index = sortedArticles.findIndex(article => article.id === location.state.selectedArticleId);
+      if (index !== -1) {
+        setCurrentIndex(index);
+        // Clear the state to prevent reapplying on navigation
+        navigate(location.pathname, { replace: true });
+      }
+    }
+  }, [location, sortedArticles, navigate]);
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 50;
@@ -149,7 +164,7 @@ const CurrentAffairs: React.FC = () => {
   return (
     <MainLayout>
       <div className="mb-6">
-        <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg p-6 shadow-lg">
+        <div className="bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg p-4 md:p-6 shadow-lg">
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center">
             <Newspaper className="mr-3 h-6 w-6 md:h-7 md:w-7" />
             Current Affairs
@@ -209,15 +224,15 @@ const CurrentAffairs: React.FC = () => {
       </div>
       
       {/* Fixed Quiz Button in right corner */}
-      <div className="fixed right-4 bottom-20 z-50">
+      <div className="fixed right-4 bottom-20 md:bottom-4 z-50">
         <Button 
           asChild
-          size="lg"
-          className="rounded-full shadow-lg p-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+          size={isMobile ? "default" : "lg"}
+          className="rounded-full shadow-lg p-2 md:p-6 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
         >
           <Link to="/quizzes">
-            <Brain className="h-6 w-6" />
-            <span className="ml-2">Take a Quiz</span>
+            <Brain className="h-5 w-5 md:h-6 md:w-6" />
+            <span className="ml-2 hidden md:inline">Take a Quiz</span>
           </Link>
         </Button>
       </div>
@@ -307,6 +322,10 @@ const CurrentAffairs: React.FC = () => {
                     onNext={currentIndex < sortedArticles.length - 1 ? () => {
                       setDirection(-1);
                       setCurrentIndex(prev => prev + 1);
+                    } : undefined}
+                    onPrevious={currentIndex > 0 ? () => {
+                      setDirection(1);
+                      setCurrentIndex(prev => prev - 1);
                     } : undefined}
                     fullContent={true}
                   />

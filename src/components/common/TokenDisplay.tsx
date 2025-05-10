@@ -8,7 +8,7 @@ interface TokenDisplayProps {
   showAddButton?: boolean;
 }
 
-const TokenDisplay: React.FC<TokenDisplayProps> = ({ showAddButton = true }) => {
+const TokenDisplay: React.FC<TokenDisplayProps> = ({ showAddButton = false }) => {
   const { currentUser, addTokens } = useApp();
   
   const handleAddTokens = () => {

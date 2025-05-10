@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,7 +18,6 @@ import SubjectQuizzes from "./pages/student/SubjectQuizzes";
 import Quizzes from "./pages/student/Quizzes";
 import QuizAttempt from "./pages/student/QuizAttempt";
 import CurrentAffairs from "./pages/student/CurrentAffairs";
-import CurrentAffairDetail from "./pages/student/CurrentAffairDetail";
 import Exams from "./pages/student/Exams";
 import Profile from "./pages/student/Profile";
 
@@ -70,7 +68,7 @@ const App = () => (
               <Route path="/quizzes" element={<Quizzes />} />
               <Route path="/quizzes/:id" element={<QuizAttempt />} />
               <Route path="/current-affairs" element={<CurrentAffairs />} />
-              <Route path="/current-affairs/:id" element={<CurrentAffairDetail />} />
+              <Route path="/current-affairs/:id" element={<Navigate to="/current-affairs" />} />
               <Route path="/exams" element={<Exams />} />
               
               {/* Student Profile */}

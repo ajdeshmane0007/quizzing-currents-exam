@@ -15,6 +15,7 @@ interface CurrentAffairCardProps {
   isPremium?: boolean;
   fullContent?: boolean;
   isDashboard?: boolean;
+  showMetadataOnly?: boolean; // Added this prop
 }
 
 const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ 
@@ -23,7 +24,8 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
   onPrevious,
   isPremium = false, 
   fullContent = false,
-  isDashboard = false
+  isDashboard = false,
+  showMetadataOnly = false // Added this prop with default value
 }) => {
   const isMobile = useIsMobile();
   
@@ -66,7 +68,7 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
         </div>
       </CardHeader>
       
-      {(!isDashboard || fullContent) && (
+      {(!isDashboard || fullContent) && !showMetadataOnly && (
         <CardContent className={`py-4 flex-grow overflow-auto ${isDashboard ? 'pt-2 pb-1' : ''}`}>
           <p className="text-gray-600">
             {fullContent ? article.content : `${article.content.slice(0, 200)}${article.content.length > 200 ? '...' : ''}`}
@@ -81,6 +83,24 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
               ))}
             </div>
           )}
+        </CardContent>
+      )}
+      
+      {/* Show metadata if specified */}
+      {showMetadataOnly && article.metadata && (
+        <CardContent className="py-2 px-3">
+          <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+            {article.metadata.source && (
+              <span className="flex items-center">
+                <span className="font-medium mr-1">Source:</span> {article.metadata.source}
+              </span>
+            )}
+            {article.metadata.readTime && (
+              <span className="flex items-center ml-auto">
+                <span className="font-medium mr-1">Read:</span> {article.metadata.readTime}
+              </span>
+            )}
+          </div>
         </CardContent>
       )}
       

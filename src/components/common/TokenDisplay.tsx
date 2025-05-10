@@ -24,8 +24,8 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ showAddButton = false }) =>
   }
   
   return (
-    <div className="flex items-center gap-2">
-      <Badge variant="outline" className={`px-2 py-0.5 ${isMobile ? 'text-xs' : 'px-3 py-1'}`}>
+    <div className="flex items-center gap-1 sm:gap-2">
+      <Badge variant="outline" className={`${isMobile ? 'px-1.5 py-0.5 text-xs' : 'px-3 py-1'}`}>
         <span className="font-semibold">{currentUser.tokens}</span> Token{currentUser.tokens !== 1 ? 's' : ''}
       </Badge>
       

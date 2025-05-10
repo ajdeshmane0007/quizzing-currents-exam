@@ -35,4 +35,38 @@ export class TokenService {
     if (!user) return "Please log in to use tokens";
     return `You have ${user.tokens} token${user.tokens !== 1 ? 's' : ''} remaining`;
   }
+  
+  /**
+   * Check if user can claim daily coins
+   */
+  static canClaimDailyCoins(user: User | null): boolean {
+    if (!user || !user.lastCoinClaim) return true;
+    
+    const lastClaim = new Date(user.lastCoinClaim);
+    const today = new Date();
+    
+    // Reset at midnight
+    return lastClaim.getDate() !== today.getDate() || 
+           lastClaim.getMonth() !== today.getMonth() || 
+           lastClaim.getFullYear() !== today.getFullYear();
+  }
+  
+  /**
+   * Get time until next claim
+   */
+  static getTimeUntilNextClaim(user: User | null): string {
+    if (!user || !user.lastCoinClaim || this.canClaimDailyCoins(user)) {
+      return "Available now";
+    }
+    
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    
+    const timeUntil = tomorrow.getTime() - new Date().getTime();
+    const hoursLeft = Math.floor(timeUntil / (1000 * 60 * 60));
+    const minutesLeft = Math.floor((timeUntil % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `Available in ${hoursLeft}h ${minutesLeft}m`;
+  }
 }

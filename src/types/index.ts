@@ -1,4 +1,3 @@
-
 export type UserRole = 'admin' | 'student';
 
 export interface User {
@@ -8,6 +7,7 @@ export interface User {
   role: UserRole;
   avatarUrl?: string;
   tokens: number; // Added tokens property
+  lastCoinClaim?: Date; // Added field to track when user last claimed daily coins
 }
 
 export interface Question {
@@ -39,6 +39,12 @@ export interface CurrentAffair {
   tags: string[];
   imageUrl?: string;
   isPremium?: boolean; // Added isPremium property
+  metadata?: {
+    source?: string;
+    author?: string;
+    readTime?: string;
+    relatedTopics?: string[];
+  }; // Added metadata field
 }
 
 export interface Exam {

@@ -55,6 +55,10 @@ interface AppContextType {
   // Token functions
   addTokens: (amount: number) => void;
   consumeTokens: (amount: number) => boolean;
+  
+  // Daily coin claim function
+  claimDailyCoins: () => boolean;
+  canClaimDailyCoins: () => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -153,6 +157,51 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     
     setCurrentUser(updatedUser);
     return true;
+  };
+  
+  // Daily coin claim functions
+  const canClaimDailyCoins = (): boolean => {
+    if (!currentUser || !currentUser.lastCoinClaim) {
+      return true;
+    }
+    
+    const lastClaim = new Date(currentUser.lastCoinClaim);
+    const today = new Date();
+    
+    // Reset at midnight
+    return lastClaim.getDate() !== today.getDate() || 
+           lastClaim.getMonth() !== today.getMonth() || 
+           lastClaim.getFullYear() !== today.getFullYear();
+  };
+  
+  const claimDailyCoins = (): boolean => {
+    if (!currentUser) return false;
+    
+    if (canClaimDailyCoins()) {
+      // Award 5 tokens as daily bonus
+      const updatedUser = {
+        ...currentUser,
+        tokens: currentUser.tokens + 5,
+        lastCoinClaim: new Date()
+      };
+      
+      setCurrentUser(updatedUser);
+      
+      toast({
+        title: "Daily Coins Claimed!",
+        description: "You've earned 5 tokens for today. Come back tomorrow for more!",
+      });
+      
+      return true;
+    }
+    
+    toast({
+      title: "Already Claimed",
+      description: "You've already claimed your daily coins. Come back tomorrow!",
+      variant: "destructive"
+    });
+    
+    return false;
   };
   
   // Admin functions
@@ -316,7 +365,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         exams,
         results,
         mockUsers,
-        classes, // Add classes to the context value
+        classes,
         createQuiz,
         updateQuiz,
         deleteQuiz,
@@ -332,6 +381,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         submitQuizResult,
         addTokens,
         consumeTokens,
+        claimDailyCoins,
+        canClaimDailyCoins,
       }}
     >
       {children}

@@ -1,4 +1,3 @@
-
 import React, { useMemo, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
@@ -8,12 +7,14 @@ import DashboardStats from '@/components/common/DashboardStats';
 import QuizCard from '@/components/common/QuizCard';
 import ExamCard from '@/components/common/ExamCard';
 import CurrentAffairCard from '@/components/common/CurrentAffairCard';
+import DailyCoinsCard from '@/components/common/DailyCoinsCard';
 import Onboarding from '@/components/student/Onboarding';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, BookOpen, Target, Award, Smile, Sparkles, Lightbulb } from 'lucide-react';
+import { ChevronRight, BookOpen, Target, Award, Smile, Sparkles, Lightbulb, Coins } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import TokenDisplay from '@/components/common/TokenDisplay';
 
 const Dashboard: React.FC = () => {
   const { currentUser, quizzes, exams, currentAffairs, results } = useApp();
@@ -82,12 +83,26 @@ const Dashboard: React.FC = () => {
         <div className="bg-gradient-to-r from-quiz-purple/90 to-quiz-purple-dark rounded-lg p-4 md:p-6 shadow-lg">
           <h1 className="text-xl md:text-3xl font-bold text-white mb-2">{`Welcome, ${currentUser?.name}`}</h1>
           <p className="text-white/80 text-sm md:text-base">{!isMobile ? "Track your progress and explore your learning journey" : "Let's learn something new today!"}</p>
+          
+          {/* Display tokens prominently */}
+          <div className="mt-3">
+            <TokenDisplay showAddButton={false} />
+          </div>
         </div>
       </div>
       
       <div className="space-y-4 md:space-y-6 pb-16 md:pb-0">
-        {/* Stats */}
-        <DashboardStats stats={stats} userType="student" />
+        {/* Daily Coins Card - at the top for visibility */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 space-y-4">
+            {/* Stats */}
+            <DashboardStats stats={stats} userType="student" />
+          </div>
+          
+          <div className="md:col-span-1">
+            <DailyCoinsCard />
+          </div>
+        </div>
         
         {/* Badges Section */}
         <div className="bg-gradient-to-r from-indigo-600/90 to-violet-500 rounded-lg p-4 md:p-5 mb-4 shadow-md text-white">
@@ -210,7 +225,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
         
-        {/* Recent Current Affairs */}
+        {/* Recent Current Affairs with Images and Metadata */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden border border-green-100">
           <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-3 md:p-4">
             <div className="flex justify-between items-center">
@@ -241,6 +256,7 @@ const Dashboard: React.FC = () => {
                         article={article} 
                         isPremium={article.isPremium}
                         isDashboard={true}
+                        showMetadataOnly={true} // Only show metadata on dashboard
                       />
                     </div>
                   </CarouselItem>

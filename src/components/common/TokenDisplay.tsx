@@ -3,6 +3,7 @@ import React from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TokenDisplayProps {
   showAddButton?: boolean;
@@ -10,6 +11,7 @@ interface TokenDisplayProps {
 
 const TokenDisplay: React.FC<TokenDisplayProps> = ({ showAddButton = false }) => {
   const { currentUser, addTokens } = useApp();
+  const isMobile = useIsMobile();
   
   const handleAddTokens = () => {
     // In a real app, this would be connected to a payment system
@@ -23,12 +25,12 @@ const TokenDisplay: React.FC<TokenDisplayProps> = ({ showAddButton = false }) =>
   
   return (
     <div className="flex items-center gap-2">
-      <Badge variant="outline" className="px-3 py-1">
+      <Badge variant="outline" className={`px-2 py-0.5 ${isMobile ? 'text-xs' : 'px-3 py-1'}`}>
         <span className="font-semibold">{currentUser.tokens}</span> Token{currentUser.tokens !== 1 ? 's' : ''}
       </Badge>
       
       {showAddButton && (
-        <Button variant="outline" size="sm" onClick={handleAddTokens}>
+        <Button variant="outline" size={isMobile ? "sm" : "default"} onClick={handleAddTokens} className="text-xs h-7 px-2">
           Add Tokens
         </Button>
       )}

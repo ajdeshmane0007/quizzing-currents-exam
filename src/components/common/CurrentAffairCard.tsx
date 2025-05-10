@@ -14,6 +14,7 @@ interface CurrentAffairCardProps {
   onPrevious?: () => void;
   isPremium?: boolean;
   fullContent?: boolean;
+  isDashboard?: boolean;
 }
 
 const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({ 
@@ -21,7 +22,8 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
   onNext, 
   onPrevious,
   isPremium = false, 
-  fullContent = false 
+  fullContent = false,
+  isDashboard = false
 }) => {
   const isMobile = useIsMobile();
   
@@ -34,7 +36,7 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
 
   return (
     <Card className="overflow-hidden h-full border border-purple-100 hover:shadow-lg transition-all flex flex-col bg-white/90 backdrop-blur-sm">
-      {article.imageUrl && (
+      {article.imageUrl && !isDashboard && (
         <div className="relative h-56 w-full overflow-hidden">
           <img
             src={article.imageUrl}
@@ -50,10 +52,10 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
           )}
         </div>
       )}
-      <CardHeader className="py-3 flex-shrink-0 border-b border-purple-50 bg-white">
+      <CardHeader className={`py-3 flex-shrink-0 border-b border-purple-50 bg-white ${isDashboard ? 'pb-1' : ''}`}>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-xl font-semibold text-purple-900 line-clamp-2">
+            <CardTitle className={`text-xl font-semibold text-purple-900 ${isDashboard ? 'line-clamp-1 text-base' : 'line-clamp-2'}`}>
               {article.title}
             </CardTitle>
             <CardDescription className="flex items-center mt-1 text-gray-500">
@@ -64,82 +66,96 @@ const CurrentAffairCard: React.FC<CurrentAffairCardProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="py-4 flex-grow overflow-auto">
-        <p className="text-gray-600">
-          {fullContent ? article.content : `${article.content.slice(0, 200)}${article.content.length > 200 ? '...' : ''}`}
-        </p>
-        
-        {article.tags.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {article.tags.map((tag) => (
-              <Badge key={tag} variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-        )}
-      </CardContent>
+      {(!isDashboard || fullContent) && (
+        <CardContent className={`py-4 flex-grow overflow-auto ${isDashboard ? 'pt-2 pb-1' : ''}`}>
+          <p className="text-gray-600">
+            {fullContent ? article.content : `${article.content.slice(0, 200)}${article.content.length > 200 ? '...' : ''}`}
+          </p>
+          
+          {article.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {article.tags.map((tag) => (
+                <Badge key={tag} variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      )}
       
-      <CardFooter className="flex-shrink-0 bg-purple-50/50 pt-2 pb-3">
-        <div className="w-full space-y-2">
-          <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+      {isDashboard ? (
+        <CardFooter className="flex-shrink-0 pt-2 pb-3">
+          <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-sm h-8">
             <Link to={`/current-affairs/${article.id}`} className="flex items-center justify-center">
-              <Eye className="mr-2 h-4 w-4" />
-              <span>View Full Article</span>
+              <Eye className="mr-2 h-3 w-3" />
+              <span>Read Article</span>
+              <ArrowRight className="ml-2 h-3 w-3" />
             </Link>
           </Button>
-          
-          <div className="flex w-full justify-between">
-            <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
-              <BookmarkPlus className="h-4 w-4 mr-1 text-purple-600" />
-              <span className="text-sm">Save</span>
+        </CardFooter>
+      ) : (
+        <CardFooter className="flex-shrink-0 bg-purple-50/50 pt-2 pb-3">
+          <div className="w-full space-y-2">
+            <Button asChild className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+              <Link to={`/current-affairs/${article.id}`} className="flex items-center justify-center">
+                <Eye className="mr-2 h-4 w-4" />
+                <span>View Full Article</span>
+              </Link>
             </Button>
             
-            <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
-              <Share2 className="h-4 w-4 mr-1 text-purple-600" />
-              <span className="text-sm">Share</span>
-            </Button>
-            
-            <div className="flex-1 flex">
-              {onPrevious && (
-                <Button 
-                  onClick={onPrevious} 
-                  variant="ghost"
-                  size="sm"
-                  className="flex-1 flex items-center justify-center text-indigo-700"
-                >
-                  {isMobile ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <>
-                      <span className="text-sm">Previous</span>
-                      <ChevronDown className="h-4 w-4 ml-1" />
-                    </>
-                  )}
-                </Button>
-              )}
+            <div className="flex w-full justify-between">
+              <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
+                <BookmarkPlus className="h-4 w-4 mr-1 text-purple-600" />
+                <span className="text-sm">Save</span>
+              </Button>
               
-              {onNext && (
-                <Button 
-                  onClick={onNext} 
-                  variant="ghost"
-                  size="sm"
-                  className="flex-1 flex items-center justify-center text-indigo-700"
-                >
-                  {isMobile ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <>
-                      <span className="text-sm">Next</span>
-                      <ChevronUp className="h-4 w-4 ml-1" />
-                    </>
-                  )}
-                </Button>
-              )}
+              <Button variant="ghost" size="sm" className="flex-1 flex items-center justify-center">
+                <Share2 className="h-4 w-4 mr-1 text-purple-600" />
+                <span className="text-sm">Share</span>
+              </Button>
+              
+              <div className="flex-1 flex">
+                {onPrevious && (
+                  <Button 
+                    onClick={onPrevious} 
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1 flex items-center justify-center text-indigo-700"
+                  >
+                    {isMobile ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <>
+                        <span className="text-sm">Previous</span>
+                        <ChevronDown className="h-4 w-4 ml-1" />
+                      </>
+                    )}
+                  </Button>
+                )}
+                
+                {onNext && (
+                  <Button 
+                    onClick={onNext} 
+                    variant="ghost"
+                    size="sm"
+                    className="flex-1 flex items-center justify-center text-indigo-700"
+                  >
+                    {isMobile ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <>
+                        <span className="text-sm">Next</span>
+                        <ChevronUp className="h-4 w-4 ml-1" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </CardFooter>
+        </CardFooter>
+      )}
     </Card>
   );
 };

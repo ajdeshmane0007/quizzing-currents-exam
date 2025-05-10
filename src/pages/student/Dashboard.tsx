@@ -240,6 +240,7 @@ const Dashboard: React.FC = () => {
                       <CurrentAffairCard 
                         article={article} 
                         isPremium={article.isPremium}
+                        isDashboard={true}
                       />
                     </div>
                   </CarouselItem>

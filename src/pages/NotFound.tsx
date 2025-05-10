@@ -25,9 +25,10 @@ const NotFound = () => {
     
     // If this is potentially a current affairs URL, try to redirect to the main page
     if (isCurrentAffairs) {
+      // Small delay to allow the app context to load fully
       setTimeout(() => {
         navigate('/current-affairs');
-      }, 2000);
+      }, 500);
     }
   }, [location.pathname, navigate]);
 

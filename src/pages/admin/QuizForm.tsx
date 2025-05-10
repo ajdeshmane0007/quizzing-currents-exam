@@ -22,7 +22,7 @@ import { Question, Quiz } from '@/types';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowLeft, PlusCircle, Trash, Check, X } from 'lucide-react';
+import { ArrowLeft, PlusCircle, Trash, Check, X, PencilLine } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 const QuizFormSchema = z.object({
@@ -81,18 +81,25 @@ const QuizForm: React.FC = () => {
       return;
     }
     
-    const quizData = {
-      ...values,
+    // Ensure all required fields are present and not undefined
+    const quizData: Omit<Quiz, 'id' | 'createdAt'> = {
+      title: values.title,
+      description: values.description,
+      category: values.category,
+      timeLimit: values.timeLimit,
+      isPremium: values.isPremium,
       questions: questions,
     };
     
     if (id) {
-      // Update existing quiz
-      updateQuiz({
+      // Update existing quiz - ensure all required properties are present
+      const updatedQuiz: Quiz = {
         id,
         ...quizData,
         createdAt: quizzes.find(q => q.id === id)?.createdAt || new Date(),
-      });
+      };
+      
+      updateQuiz(updatedQuiz);
       toast({
         title: "Quiz Updated",
         description: "Your quiz has been updated successfully"
@@ -340,7 +347,7 @@ const QuizForm: React.FC = () => {
                               variant="outline"
                               onClick={() => handleEditQuestion(index)}
                             >
-                              <Pencil className="h-4 w-4" />
+                              <PencilLine className="h-4 w-4" />
                             </Button>
                             <Button
                               type="button"
